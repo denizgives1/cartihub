@@ -66,17 +66,17 @@ end
 -- because MM2 can replace that table when a real copy of an item is received.
 _G.DenizHubFakeInventoryAmounts = _G.DenizHubFakeInventoryAmounts or {}
 
-function CartiHubGetFakeInventoryKey(itemId, itemType)
+function DenizHubGetFakeInventoryKey(itemId, itemType)
     local bucket = itemType == "Item" and "Weapons" or tostring(itemType)
     return bucket .. ":" .. tostring(itemId)
 end
 
 function DenizHubGetFakeInventoryAmount(itemId, itemType)
-    return tonumber(_G.DenizHubFakeInventoryAmounts[CartiHubGetFakeInventoryKey(itemId, itemType)]) or 0
+    return tonumber(_G.DenizHubFakeInventoryAmounts[DenizHubGetFakeInventoryKey(itemId, itemType)]) or 0
 end
 
 function DenizHubSetFakeInventoryAmount(itemId, itemType, amount)
-    local key = CartiHubGetFakeInventoryKey(itemId, itemType)
+    local key = DenizHubGetFakeInventoryKey(itemId, itemType)
     local owned = getProfileOwnedTable(itemType)
     amount = math.max(0, math.floor(tonumber(amount) or 0))
 
@@ -1447,16 +1447,16 @@ local function stripUnsafeCloneDescendants(instance)
 end
 
 local function markClonedVisualTree(instance)
-    instance:SetAttribute("CartiHubClonedVisual", true)
+    instance:SetAttribute("DenizHubClonedVisual", true)
 
     for _, descendant in ipairs(instance:GetDescendants()) do
-        descendant:SetAttribute("CartiHubClonedVisual", true)
+        descendant:SetAttribute("DenizHubClonedVisual", true)
     end
 end
 
 local function clearClonedVisualChildren(display)
     for _, descendant in ipairs(display:GetDescendants()) do
-        if descendant:GetAttribute("CartiHubClonedVisual") then
+        if descendant:GetAttribute("DenizHubClonedVisual") then
             descendant:Destroy()
         end
     end
@@ -1570,7 +1570,7 @@ local function applyExportedVisualTree(display, visualTree)
 
                 if visual:IsA("BasePart") then
                     local weld = Instance.new("Weld")
-                    weld.Name = "CartiHubVisualWeld"
+                    weld.Name = "DenizHubVisualWeld"
                     weld.Part0 = display
                     weld.Part1 = visual
                     weld.C0 = typeof(visualData.RelativeCFrame) == "CFrame"
@@ -1578,7 +1578,7 @@ local function applyExportedVisualTree(display, visualTree)
                         or display.CFrame:ToObjectSpace(visual.CFrame)
                     weld.C1 = CFrame.new()
                     weld.Parent = visual
-                    weld:SetAttribute("CartiHubClonedVisual", true)
+                    weld:SetAttribute("DenizHubClonedVisual", true)
                 end
             end
         else
@@ -2213,7 +2213,7 @@ local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, -40, 0, 50)
 Title.Position = UDim2.new(0, 15, 0, 0)
 Title.BackgroundTransparency = 1
-Title.Text = "Carti Hub"
+Title.Text = "DenizHub"
 Title.TextColor3 = Color3.fromRGB(255, 235, 255)
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 22
@@ -2407,23 +2407,23 @@ local KeybindsFrame = CreateTabFrame()
 SpawnerFrame.Visible = true
 SpawnerTabBtn.BackgroundColor3 = BUTTON_HOVER_COLOR
 
-CartiHubBlockSessionBox = CreateBox(BlockFrame, "RBXSECURITY session")
-CartiHubBlockTrackerBox = CreateBox(BlockFrame, "RBXEventTrackerV2 value")
-_G.CartiHubGetBlockCredentials = function()
-    return CartiHubBlockSessionBox and CartiHubBlockSessionBox.Text or "",
-        CartiHubBlockTrackerBox and CartiHubBlockTrackerBox.Text or "",
+DenizHubBlockSessionBox = CreateBox(BlockFrame, "RBXSECURITY session")
+DenizHubBlockTrackerBox = CreateBox(BlockFrame, "RBXEventTrackerV2 value")
+_G.DenizHubGetBlockCredentials = function()
+    return DenizHubBlockSessionBox and DenizHubBlockSessionBox.Text or "",
+        DenizHubBlockTrackerBox and DenizHubBlockTrackerBox.Text or "",
         ""
 end
 
-_G.CartiHubPlayerListBlockButtonsEnabled = false
-CartiHubPlayerListBlockToggleBtn = CreateBtn(BlockFrame, "PLAYERLIST BLOCK: OFF")
-CartiHubPlayerListBlockToggleBtn.MouseButton1Click:Connect(function()
-    local enabled = not _G.CartiHubPlayerListBlockButtonsEnabled
-    _G.CartiHubPlayerListBlockButtonsEnabled = enabled
-    CartiHubPlayerListBlockToggleBtn.Text = enabled and "PLAYERLIST BLOCK: ON" or "PLAYERLIST BLOCK: OFF"
-    CartiHubPlayerListBlockToggleBtn.BackgroundColor3 = enabled and BUTTON_HOVER_COLOR or BUTTON_COLOR
+_G.DenizHubPlayerListBlockButtonsEnabled = false
+DenizHubPlayerListBlockToggleBtn = CreateBtn(BlockFrame, "PLAYERLIST BLOCK: OFF")
+DenizHubPlayerListBlockToggleBtn.MouseButton1Click:Connect(function()
+    local enabled = not _G.DenizHubPlayerListBlockButtonsEnabled
+    _G.DenizHubPlayerListBlockButtonsEnabled = enabled
+    DenizHubPlayerListBlockToggleBtn.Text = enabled and "PLAYERLIST BLOCK: ON" or "PLAYERLIST BLOCK: OFF"
+    DenizHubPlayerListBlockToggleBtn.BackgroundColor3 = enabled and BUTTON_HOVER_COLOR or BUTTON_COLOR
 
-    local setEnabled = _G.CartiHubSetPlayerListBlockButtonsEnabled
+    local setEnabled = _G.DenizHubSetPlayerListBlockButtonsEnabled
     if type(setEnabled) == "function" then
         setEnabled(enabled)
     end
@@ -3415,47 +3415,47 @@ OfferSpawnerBtn.MouseButton1Click:Connect(function()
     OfferSpawnerGuiFrame.Visible = not OfferSpawnerGuiFrame.Visible
 end)
 
-CartiHubSelectedUpgradePlayerName = nil
-CartiHubUpgradePlayerDropdownBtn = CreateBtn(UpgradingFrame, "SELECT PLAYER: NONE")
-CartiHubUpgradePlayerListFrame = Instance.new("ScrollingFrame")
-CartiHubUpgradePlayerListFrame.Size = UDim2.new(1, 0, 0, 180)
-CartiHubUpgradePlayerListFrame.BackgroundColor3 = Color3.fromRGB(55, 22, 95)
-CartiHubUpgradePlayerListFrame.BorderSizePixel = 0
-CartiHubUpgradePlayerListFrame.ScrollBarThickness = 4
-CartiHubUpgradePlayerListFrame.ScrollBarImageColor3 = Color3.fromRGB(200, 100, 255)
-CartiHubUpgradePlayerListFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-CartiHubUpgradePlayerListFrame.ClipsDescendants = true
-CartiHubUpgradePlayerListFrame.Parent = UpgradingFrame
-Instance.new("UICorner", CartiHubUpgradePlayerListFrame).CornerRadius = UDim.new(0, 8)
+DenizHubSelectedUpgradePlayerName = nil
+DenizHubUpgradePlayerDropdownBtn = CreateBtn(UpgradingFrame, "SELECT PLAYER: NONE")
+DenizHubUpgradePlayerListFrame = Instance.new("ScrollingFrame")
+DenizHubUpgradePlayerListFrame.Size = UDim2.new(1, 0, 0, 180)
+DenizHubUpgradePlayerListFrame.BackgroundColor3 = Color3.fromRGB(55, 22, 95)
+DenizHubUpgradePlayerListFrame.BorderSizePixel = 0
+DenizHubUpgradePlayerListFrame.ScrollBarThickness = 4
+DenizHubUpgradePlayerListFrame.ScrollBarImageColor3 = Color3.fromRGB(200, 100, 255)
+DenizHubUpgradePlayerListFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+DenizHubUpgradePlayerListFrame.ClipsDescendants = true
+DenizHubUpgradePlayerListFrame.Parent = UpgradingFrame
+Instance.new("UICorner", DenizHubUpgradePlayerListFrame).CornerRadius = UDim.new(0, 8)
 
-CartiHubUpgradePlayerListPadding = Instance.new("UIPadding")
-CartiHubUpgradePlayerListPadding.PaddingTop = UDim.new(0, 6)
-CartiHubUpgradePlayerListPadding.PaddingBottom = UDim.new(0, 6)
-CartiHubUpgradePlayerListPadding.PaddingLeft = UDim.new(0, 6)
-CartiHubUpgradePlayerListPadding.PaddingRight = UDim.new(0, 6)
-CartiHubUpgradePlayerListPadding.Parent = CartiHubUpgradePlayerListFrame
+DenizHubUpgradePlayerListPadding = Instance.new("UIPadding")
+DenizHubUpgradePlayerListPadding.PaddingTop = UDim.new(0, 6)
+DenizHubUpgradePlayerListPadding.PaddingBottom = UDim.new(0, 6)
+DenizHubUpgradePlayerListPadding.PaddingLeft = UDim.new(0, 6)
+DenizHubUpgradePlayerListPadding.PaddingRight = UDim.new(0, 6)
+DenizHubUpgradePlayerListPadding.Parent = DenizHubUpgradePlayerListFrame
 
-CartiHubUpgradePlayerListLayout = Instance.new("UIListLayout")
-CartiHubUpgradePlayerListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-CartiHubUpgradePlayerListLayout.Padding = UDim.new(0, 5)
-CartiHubUpgradePlayerListLayout.Parent = CartiHubUpgradePlayerListFrame
+DenizHubUpgradePlayerListLayout = Instance.new("UIListLayout")
+DenizHubUpgradePlayerListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+DenizHubUpgradePlayerListLayout.Padding = UDim.new(0, 5)
+DenizHubUpgradePlayerListLayout.Parent = DenizHubUpgradePlayerListFrame
 
-CartiHubUpgradePlayerListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    CartiHubUpgradePlayerListFrame.CanvasSize = UDim2.new(
+DenizHubUpgradePlayerListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    DenizHubUpgradePlayerListFrame.CanvasSize = UDim2.new(
         0,
         0,
         0,
-        CartiHubUpgradePlayerListLayout.AbsoluteContentSize.Y + 12
+        DenizHubUpgradePlayerListLayout.AbsoluteContentSize.Y + 12
     )
 end)
 
-CartiHubLaunchUpgradeTradeBtn = CreateBtn(UpgradingFrame, "LAUNCH FAKE TRADE")
-CartiHubFakePersonTradeBtn = CreateBtn(UpgradingFrame, "FAKE TRADE FAKE PERSON")
-CartiHubPlayerValuesBtn = CreateBtn(UpgradingFrame, "PLAYERS VALUES")
-CartiHubBlockValueBtn = CreateBtn(UpgradingFrame, "BLOCK VALUE")
+DenizHubLaunchUpgradeTradeBtn = CreateBtn(UpgradingFrame, "LAUNCH FAKE TRADE")
+DenizHubFakePersonTradeBtn = CreateBtn(UpgradingFrame, "FAKE TRADE FAKE PERSON")
+DenizHubPlayerValuesBtn = CreateBtn(UpgradingFrame, "PLAYERS VALUES")
+DenizHubBlockValueBtn = CreateBtn(UpgradingFrame, "BLOCK VALUE")
 
 do
-local CartiHubBlockLastTradedBtn = CreateBtn(BlockFrame, "BLOCK LAST TRADED USER")
+local DenizHubBlockLastTradedBtn = CreateBtn(BlockFrame, "BLOCK LAST TRADED USER")
 local HttpService = game:GetService("HttpService")
 
 local CARTI_HUB_USERNAME_LOOKUP_URL = "https://users.roblox.com/v1/usernames/users"
@@ -3472,15 +3472,15 @@ local CARTI_HUB_REQUEST_BLOCK_HAIR_ASSET_IDS = {
     [62724852] = true, -- Chestnut Bun
 }
 
-local function CartiHubGetLocalRequestFunction()
+local function DenizHubGetLocalRequestFunction()
     return request
         or http_request
         or (syn and syn.request)
         or (fluxus and fluxus.request)
 end
 
-local function CartiHubGetRuntimeBlockCredentials()
-    local provider = _G.CartiHubGetBlockCredentials
+local function DenizHubGetRuntimeBlockCredentials()
+    local provider = _G.DenizHubGetBlockCredentials
     if type(provider) ~= "function" then
         return "", "", ""
     end
@@ -3489,7 +3489,7 @@ local function CartiHubGetRuntimeBlockCredentials()
     return tostring(session or ""), tostring(tracker or ""), tostring(csrfToken or "")
 end
 
-local function CartiHubGetResponseHeader(response, headerName)
+local function DenizHubGetResponseHeader(response, headerName)
     local headers = response and (response.Headers or response.headers)
     if type(headers) ~= "table" then
         return nil
@@ -3505,16 +3505,16 @@ local function CartiHubGetResponseHeader(response, headerName)
     return nil
 end
 
-local function CartiHubGetResponseStatus(response)
+local function DenizHubGetResponseStatus(response)
     return tonumber(response and (response.StatusCode or response.status_code)) or 0
 end
 
-local function CartiHubGetResponseBody(response)
+local function DenizHubGetResponseBody(response)
     return response and (response.Body or response.body) or ""
 end
 
-local function CartiHubDirectBlockRobloxUser(requestFunction, username)
-    local robloSecurity, eventTracker, configuredCsrfToken = CartiHubGetRuntimeBlockCredentials()
+local function DenizHubDirectBlockRobloxUser(requestFunction, username)
+    local robloSecurity, eventTracker, configuredCsrfToken = DenizHubGetRuntimeBlockCredentials()
     if robloSecurity == "" then
         return false, "SET SESSION"
     end
@@ -3535,12 +3535,12 @@ local function CartiHubDirectBlockRobloxUser(requestFunction, username)
         }),
     })
 
-    if CartiHubGetResponseStatus(lookupResponse) < 200
-        or CartiHubGetResponseStatus(lookupResponse) >= 300 then
+    if DenizHubGetResponseStatus(lookupResponse) < 200
+        or DenizHubGetResponseStatus(lookupResponse) >= 300 then
         return false, "USER LOOKUP FAILED"
     end
 
-    local lookupData = HttpService:JSONDecode(CartiHubGetResponseBody(lookupResponse))
+    local lookupData = HttpService:JSONDecode(DenizHubGetResponseBody(lookupResponse))
     local userData = lookupData and lookupData.data and lookupData.data[1]
     local userId = userData and tonumber(userData.id)
     if not userId then
@@ -3556,7 +3556,7 @@ local function CartiHubDirectBlockRobloxUser(requestFunction, username)
         .. "; RBXEventTrackerV2=" .. eventTracker
     local blockUrl = string.format(CARTI_HUB_BLOCK_URL, userId)
     local csrfToken = configuredCsrfToken ~= "" and configuredCsrfToken
-        or (_G.CartiHubBlockCsrfToken or "")
+        or (_G.DenizHubBlockCsrfToken or "")
     if csrfToken == "" then
         local csrfResponse = requestFunction({
             -- CSRF tokens are scoped to Roblox's API domain. Request it from the
@@ -3573,10 +3573,10 @@ local function CartiHubDirectBlockRobloxUser(requestFunction, username)
             Body = "{}",
         })
 
-        csrfToken = CartiHubGetResponseHeader(csrfResponse, "x-csrf-token")
-        _G.CartiHubBlockCsrfToken = csrfToken
+        csrfToken = DenizHubGetResponseHeader(csrfResponse, "x-csrf-token")
+        _G.DenizHubBlockCsrfToken = csrfToken
         print(("[Carti Hub] Block CSRF preflight: status=%d token=%s"):format(
-            CartiHubGetResponseStatus(csrfResponse),
+            DenizHubGetResponseStatus(csrfResponse),
             csrfToken and "received" or "missing"
         ))
     end
@@ -3599,12 +3599,12 @@ local function CartiHubDirectBlockRobloxUser(requestFunction, username)
         Body = "{}",
     })
 
-    local statusCode = CartiHubGetResponseStatus(blockResponse)
+    local statusCode = DenizHubGetResponseStatus(blockResponse)
     print(("[Carti Hub] Block result: status=%d body=%s"):format(
         statusCode,
-        string.sub(CartiHubGetResponseBody(blockResponse), 1, 300)
+        string.sub(DenizHubGetResponseBody(blockResponse), 1, 300)
     ))
-    local normalizedBlockBody = string.gsub(CartiHubGetResponseBody(blockResponse), "%s+", "")
+    local normalizedBlockBody = string.gsub(DenizHubGetResponseBody(blockResponse), "%s+", "")
     -- Roblox returns numeric code 1 when this request is a no-op for an already
     -- blocked account. Verify the authoritative blocked-user list in both cases.
     if (statusCode >= 200 and statusCode < 300)
@@ -3620,8 +3620,8 @@ local function CartiHubDirectBlockRobloxUser(requestFunction, username)
             },
         })
 
-        local verifyStatus = CartiHubGetResponseStatus(verifyResponse)
-        local verifyBody = CartiHubGetResponseBody(verifyResponse)
+        local verifyStatus = DenizHubGetResponseStatus(verifyResponse)
+        local verifyBody = DenizHubGetResponseBody(verifyResponse)
         print(("[Carti Hub] Block verification: status=%d body=%s"):format(
             verifyStatus,
             string.sub(verifyBody, 1, 300)
@@ -3653,7 +3653,7 @@ local function CartiHubDirectBlockRobloxUser(requestFunction, username)
     end
 
     if statusCode == 403 then
-        _G.CartiHubBlockCsrfToken = nil
+        _G.DenizHubBlockCsrfToken = nil
         return false, "CSRF TOKEN REJECTED"
     end
 
@@ -3664,7 +3664,7 @@ local function CartiHubDirectBlockRobloxUser(requestFunction, username)
     return false, "BLOCK FAILED"
 end
 
-_G.CartiHubBlockUsername = function(username, callback)
+_G.DenizHubBlockUsername = function(username, callback)
     username = tostring(username or ""):gsub("^%s+", ""):gsub("%s+$", "")
     if username == "" then
         if callback then
@@ -3673,7 +3673,7 @@ _G.CartiHubBlockUsername = function(username, callback)
         return false
     end
 
-    local requestFunction = CartiHubGetLocalRequestFunction()
+    local requestFunction = DenizHubGetLocalRequestFunction()
     if not requestFunction then
         if callback then
             callback(false, "HTTP UNAVAILABLE")
@@ -3681,7 +3681,7 @@ _G.CartiHubBlockUsername = function(username, callback)
         return false
     end
 
-    local robloSecurity = CartiHubGetRuntimeBlockCredentials()
+    local robloSecurity = DenizHubGetRuntimeBlockCredentials()
     if robloSecurity == "" then
         if callback then
             callback(false, "SET SESSION")
@@ -3691,7 +3691,7 @@ _G.CartiHubBlockUsername = function(username, callback)
 
     task.spawn(function()
         local callOk, success, detail = pcall(function()
-            return CartiHubDirectBlockRobloxUser(requestFunction, username)
+            return DenizHubDirectBlockRobloxUser(requestFunction, username)
         end)
 
         if not callOk then
@@ -3710,66 +3710,66 @@ _G.CartiHubBlockUsername = function(username, callback)
     return true
 end
 
-local function CartiHubSetBlockLastTradedButtonText(text, duration)
-    CartiHubBlockLastTradedBtn.Text = text
+local function DenizHubSetBlockLastTradedButtonText(text, duration)
+    DenizHubBlockLastTradedBtn.Text = text
 
     if duration then
         task.delay(duration, function()
-            if CartiHubBlockLastTradedBtn and CartiHubBlockLastTradedBtn.Parent then
-                CartiHubBlockLastTradedBtn.Text = "BLOCK LAST TRADED USER"
+            if DenizHubBlockLastTradedBtn and DenizHubBlockLastTradedBtn.Parent then
+                DenizHubBlockLastTradedBtn.Text = "BLOCK LAST TRADED USER"
             end
         end)
     end
 end
 
-CartiHubBlockLastTradedBtn.MouseButton1Click:Connect(function()
-    local username = CartiHubGetLastTradedPlayerName and CartiHubGetLastTradedPlayerName()
+DenizHubBlockLastTradedBtn.MouseButton1Click:Connect(function()
+    local username = DenizHubGetLastTradedPlayerName and DenizHubGetLastTradedPlayerName()
     if not username then
-        CartiHubSetBlockLastTradedButtonText("NO LAST TRADED USER", 2)
+        DenizHubSetBlockLastTradedButtonText("NO LAST TRADED USER", 2)
         return
     end
 
-    local requestFunction = CartiHubGetLocalRequestFunction()
+    local requestFunction = DenizHubGetLocalRequestFunction()
     if not requestFunction then
-        CartiHubSetBlockLastTradedButtonText("EXECUTOR HTTP UNAVAILABLE", 2)
+        DenizHubSetBlockLastTradedButtonText("EXECUTOR HTTP UNAVAILABLE", 2)
         return
     end
 
-    local robloSecurity = CartiHubGetRuntimeBlockCredentials()
+    local robloSecurity = DenizHubGetRuntimeBlockCredentials()
     if robloSecurity == "" then
-        CartiHubSetBlockLastTradedButtonText("SET ROBLOSECURITY FIRST", 2)
+        DenizHubSetBlockLastTradedButtonText("SET ROBLOSECURITY FIRST", 2)
         return
     end
 
-    CartiHubBlockLastTradedBtn.Text = "BLOCKING " .. tostring(username) .. "..."
+    DenizHubBlockLastTradedBtn.Text = "BLOCKING " .. tostring(username) .. "..."
 
     task.spawn(function()
         local callOk, success, errorText = pcall(function()
-            return CartiHubDirectBlockRobloxUser(requestFunction, username)
+            return DenizHubDirectBlockRobloxUser(requestFunction, username)
         end)
 
         if not callOk then
-            CartiHubSetBlockLastTradedButtonText("BLOCKER OFFLINE", 2)
+            DenizHubSetBlockLastTradedButtonText("BLOCKER OFFLINE", 2)
             warn("[Carti Hub] Direct Roblox block request failed: " .. tostring(success))
             return
         end
 
         if success then
-            CartiHubSetBlockLastTradedButtonText("BLOCKED: " .. tostring(username), 2)
+            DenizHubSetBlockLastTradedButtonText("BLOCKED: " .. tostring(username), 2)
         else
-            CartiHubSetBlockLastTradedButtonText(tostring(errorText):upper(), 2)
+            DenizHubSetBlockLastTradedButtonText(tostring(errorText):upper(), 2)
             warn("[Carti Hub] Roblox block failed: " .. tostring(errorText))
         end
     end)
 end)
 
-function CartiHubDeclinePalHairFriendRequests(runGeneration)
-    if runGeneration and runGeneration ~= CartiHubAutoDeclinePalHairSequence then
+function DenizHubDeclinePalHairFriendRequests(runGeneration)
+    if runGeneration and runGeneration ~= DenizHubAutoDeclinePalHairSequence then
         return true, 0
     end
 
-    local requestFunction = CartiHubGetLocalRequestFunction()
-    local robloSecurity, eventTracker, configuredCsrfToken = CartiHubGetRuntimeBlockCredentials()
+    local requestFunction = DenizHubGetLocalRequestFunction()
+    local robloSecurity, eventTracker, configuredCsrfToken = DenizHubGetRuntimeBlockCredentials()
     if not requestFunction or robloSecurity == "" then
         return false, "HTTP OR SESSION UNAVAILABLE"
     end
@@ -3779,7 +3779,7 @@ function CartiHubDeclinePalHairFriendRequests(runGeneration)
         return false, "BROWSER TRACKER INVALID"
     end
 
-    if os.clock() < (_G.CartiHubPalHairNextAllowedAt or 0) then
+    if os.clock() < (_G.DenizHubPalHairNextAllowedAt or 0) then
         return true, 0
     end
 
@@ -3787,14 +3787,14 @@ function CartiHubDeclinePalHairFriendRequests(runGeneration)
         .. "; RBXEventTrackerV2=" .. eventTracker
     local declinedCount = 0
     local csrfToken = configuredCsrfToken ~= "" and configuredCsrfToken
-        or (_G.CartiHubFriendRequestCsrfToken or "")
-    _G.CartiHubPalHairCheckedAt = _G.CartiHubPalHairCheckedAt or {}
-    _G.CartiHubPalHairPendingUsers = _G.CartiHubPalHairPendingUsers or {}
+        or (_G.DenizHubFriendRequestCsrfToken or "")
+    _G.DenizHubPalHairCheckedAt = _G.DenizHubPalHairCheckedAt or {}
+    _G.DenizHubPalHairPendingUsers = _G.DenizHubPalHairPendingUsers or {}
     local cursor = ""
     local pagesChecked = 0
 
     while pagesChecked < 10 do
-        if runGeneration and runGeneration ~= CartiHubAutoDeclinePalHairSequence then
+        if runGeneration and runGeneration ~= DenizHubAutoDeclinePalHairSequence then
             return true, declinedCount
         end
 
@@ -3809,10 +3809,10 @@ function CartiHubDeclinePalHairFriendRequests(runGeneration)
             },
         })
 
-        local requestListStatus = CartiHubGetResponseStatus(requestList)
+        local requestListStatus = DenizHubGetResponseStatus(requestList)
         if requestListStatus == 429 then
-            local retryAfter = tonumber(CartiHubGetResponseHeader(requestList, "retry-after")) or 15
-            _G.CartiHubPalHairNextAllowedAt = os.clock() + math.max(5, retryAfter)
+            local retryAfter = tonumber(DenizHubGetResponseHeader(requestList, "retry-after")) or 15
+            _G.DenizHubPalHairNextAllowedAt = os.clock() + math.max(5, retryAfter)
             warn("[Carti Hub] Friend-request API rate limited; resuming in " .. retryAfter .. " seconds.")
             return true, declinedCount
         end
@@ -3820,17 +3820,17 @@ function CartiHubDeclinePalHairFriendRequests(runGeneration)
         if requestListStatus < 200 or requestListStatus >= 300 then
             return false, ("REQUEST LIST FAILED (%d): %s"):format(
                 requestListStatus,
-                string.sub(CartiHubGetResponseBody(requestList), 1, 160)
+                string.sub(DenizHubGetResponseBody(requestList), 1, 160)
             )
         end
 
-        local decodeOk, decoded = pcall(HttpService.JSONDecode, HttpService, CartiHubGetResponseBody(requestList))
+        local decodeOk, decoded = pcall(HttpService.JSONDecode, HttpService, DenizHubGetResponseBody(requestList))
         if not decodeOk or type(decoded) ~= "table" then
             return false, "REQUEST LIST INVALID"
         end
 
         for _, entry in ipairs(decoded.data or {}) do
-            if runGeneration and runGeneration ~= CartiHubAutoDeclinePalHairSequence then
+            if runGeneration and runGeneration ~= DenizHubAutoDeclinePalHairSequence then
                 return true, declinedCount
             end
 
@@ -3838,7 +3838,7 @@ function CartiHubDeclinePalHairFriendRequests(runGeneration)
                 or (entry.requester and entry.requester.id))
 
             if requesterId
-                and os.clock() - (_G.CartiHubPalHairCheckedAt[requesterId] or 0) >= 300 then
+                and os.clock() - (_G.DenizHubPalHairCheckedAt[requesterId] or 0) >= 300 then
                 local wearingOk, wearingData = pcall(function()
                     return Players:GetCharacterAppearanceInfoAsync(requesterId)
                 end)
@@ -3858,7 +3858,7 @@ function CartiHubDeclinePalHairFriendRequests(runGeneration)
 
                 if hasPalHair then
                     local now = os.clock()
-                    local pendingUsers = _G.CartiHubPalHairPendingUsers
+                    local pendingUsers = _G.DenizHubPalHairPendingUsers
                     pendingUsers[requesterId] = pendingUsers[requesterId] or now
 
                     local recentCount = 0
@@ -3886,8 +3886,8 @@ function CartiHubDeclinePalHairFriendRequests(runGeneration)
                                 },
                                 Body = "{}",
                             })
-                            csrfToken = CartiHubGetResponseHeader(csrfResponse, "x-csrf-token") or ""
-                            _G.CartiHubFriendRequestCsrfToken = csrfToken
+                            csrfToken = DenizHubGetResponseHeader(csrfResponse, "x-csrf-token") or ""
+                            _G.DenizHubFriendRequestCsrfToken = csrfToken
                         end
 
                         if csrfToken ~= "" then
@@ -3904,16 +3904,16 @@ function CartiHubDeclinePalHairFriendRequests(runGeneration)
                                 },
                                 Body = "{}",
                             })
-                            local declineAllStatus = CartiHubGetResponseStatus(declineAllResponse)
+                            local declineAllStatus = DenizHubGetResponseStatus(declineAllResponse)
 
                             if declineAllStatus >= 200 and declineAllStatus < 300 then
                                 table.clear(pendingUsers)
-                                table.clear(_G.CartiHubPalHairCheckedAt)
+                                table.clear(_G.DenizHubPalHairCheckedAt)
                                 print("[Carti Hub] Declined all friend requests after Pal Hair bot surge.")
                                 return true, recentCount
                             elseif declineAllStatus == 429 then
-                                local retryAfter = tonumber(CartiHubGetResponseHeader(declineAllResponse, "retry-after")) or 15
-                                _G.CartiHubPalHairNextAllowedAt = os.clock() + math.max(5, retryAfter)
+                                local retryAfter = tonumber(DenizHubGetResponseHeader(declineAllResponse, "retry-after")) or 15
+                                _G.DenizHubPalHairNextAllowedAt = os.clock() + math.max(5, retryAfter)
                                 return true, 0
                             end
                         end
@@ -3938,8 +3938,8 @@ function CartiHubDeclinePalHairFriendRequests(runGeneration)
                             },
                             Body = "{}",
                         })
-                        csrfToken = CartiHubGetResponseHeader(csrfResponse, "x-csrf-token") or ""
-                        _G.CartiHubFriendRequestCsrfToken = csrfToken
+                        csrfToken = DenizHubGetResponseHeader(csrfResponse, "x-csrf-token") or ""
+                        _G.DenizHubFriendRequestCsrfToken = csrfToken
                     end
 
                     if csrfToken ~= "" then
@@ -3957,31 +3957,31 @@ function CartiHubDeclinePalHairFriendRequests(runGeneration)
                             Body = "{}",
                         })
 
-                        local declineStatus = CartiHubGetResponseStatus(declineResponse)
+                        local declineStatus = DenizHubGetResponseStatus(declineResponse)
                         if declineStatus >= 200 and declineStatus < 300 then
                             declinedCount += 1
-                            _G.CartiHubPalHairCheckedAt[requesterId] = os.clock()
-                            _G.CartiHubPalHairPendingUsers[requesterId] = nil
+                            _G.DenizHubPalHairCheckedAt[requesterId] = os.clock()
+                            _G.DenizHubPalHairPendingUsers[requesterId] = nil
                             print("[Carti Hub] Declined Pal Hair friend request from user " .. requesterId)
                             task.wait(2)
                         elseif declineStatus == 403 then
                             csrfToken = ""
-                            _G.CartiHubFriendRequestCsrfToken = nil
+                            _G.DenizHubFriendRequestCsrfToken = nil
                         elseif declineStatus == 429 then
-                            local retryAfter = tonumber(CartiHubGetResponseHeader(declineResponse, "retry-after")) or 15
-                            _G.CartiHubPalHairNextAllowedAt = os.clock() + math.max(5, retryAfter)
+                            local retryAfter = tonumber(DenizHubGetResponseHeader(declineResponse, "retry-after")) or 15
+                            _G.DenizHubPalHairNextAllowedAt = os.clock() + math.max(5, retryAfter)
                             warn("[Carti Hub] Friend-request API rate limited; resuming in " .. retryAfter .. " seconds.")
                             return true, declinedCount
                         else
                             warn(("[Carti Hub] Decline failed for %d: status=%d body=%s"):format(
                                 requesterId,
                                 declineStatus,
-                                string.sub(CartiHubGetResponseBody(declineResponse), 1, 160)
+                                string.sub(DenizHubGetResponseBody(declineResponse), 1, 160)
                             ))
                         end
                     end
                 elseif wearingOk and type(wearingData) == "table" then
-                    _G.CartiHubPalHairCheckedAt[requesterId] = os.clock()
+                    _G.DenizHubPalHairCheckedAt[requesterId] = os.clock()
                 end
 
                 task.wait(0.15)
@@ -3998,9 +3998,9 @@ function CartiHubDeclinePalHairFriendRequests(runGeneration)
     return true, declinedCount
 end
 
-function CartiHubBlockUsersFromFriendRequests()
-    local requestFunction = CartiHubGetLocalRequestFunction()
-    local robloSecurity, eventTracker = CartiHubGetRuntimeBlockCredentials()
+function DenizHubBlockUsersFromFriendRequests()
+    local requestFunction = DenizHubGetLocalRequestFunction()
+    local robloSecurity, eventTracker = DenizHubGetRuntimeBlockCredentials()
     if not requestFunction or robloSecurity == "" then
         return false, "HTTP OR SESSION UNAVAILABLE"
     end
@@ -4028,12 +4028,12 @@ function CartiHubBlockUsersFromFriendRequests()
             },
         })
 
-        if CartiHubGetResponseStatus(response) < 200
-            or CartiHubGetResponseStatus(response) >= 300 then
+        if DenizHubGetResponseStatus(response) < 200
+            or DenizHubGetResponseStatus(response) >= 300 then
             return false, "REQUEST LIST FAILED"
         end
 
-        local decodeOk, data = pcall(HttpService.JSONDecode, HttpService, CartiHubGetResponseBody(response))
+        local decodeOk, data = pcall(HttpService.JSONDecode, HttpService, DenizHubGetResponseBody(response))
         if not decodeOk or type(data) ~= "table" then
             return false, "REQUEST LIST INVALID"
         end
@@ -4075,7 +4075,7 @@ function CartiHubBlockUsersFromFriendRequests()
                         local errorText
 
                         for attempt = 1, 3 do
-                            blocked, errorText = CartiHubDirectBlockRobloxUser(requestFunction, username)
+                            blocked, errorText = DenizHubDirectBlockRobloxUser(requestFunction, username)
                             if blocked or errorText ~= "BLOCK RATE LIMITED" then
                                 break
                             end
@@ -4110,19 +4110,19 @@ function CartiHubBlockUsersFromFriendRequests()
 end
 end
 
-function CartiHubSetSelectedUpgradePlayer(username)
-    CartiHubSelectedUpgradePlayerName = username
-    CartiHubUpgradePlayerDropdownBtn.Text = username and ("SELECT PLAYER: " .. username) or "SELECT PLAYER: NONE"
+function DenizHubSetSelectedUpgradePlayer(username)
+    DenizHubSelectedUpgradePlayerName = username
+    DenizHubUpgradePlayerDropdownBtn.Text = username and ("SELECT PLAYER: " .. username) or "SELECT PLAYER: NONE"
 end
 
-function CartiHubRefreshUpgradePlayerDropdown()
-    if not CartiHubUpgradePlayerListFrame or not CartiHubUpgradePlayerListFrame.Parent then
+function DenizHubRefreshUpgradePlayerDropdown()
+    if not DenizHubUpgradePlayerListFrame or not DenizHubUpgradePlayerListFrame.Parent then
         return
     end
 
-    local selectedStillHere = CartiHubSelectedUpgradePlayerName == nil
+    local selectedStillHere = DenizHubSelectedUpgradePlayerName == nil
 
-    for _, child in ipairs(CartiHubUpgradePlayerListFrame:GetChildren()) do
+    for _, child in ipairs(DenizHubUpgradePlayerListFrame:GetChildren()) do
         if child:IsA("GuiObject") then
             child:Destroy()
         end
@@ -4130,13 +4130,13 @@ function CartiHubRefreshUpgradePlayerDropdown()
 
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= localPlayer then
-            if player.Name == CartiHubSelectedUpgradePlayerName then
+            if player.Name == DenizHubSelectedUpgradePlayerName then
                 selectedStillHere = true
             end
 
             local playerButton = Instance.new("TextButton")
             playerButton.Size = UDim2.new(1, 0, 0, 30)
-            playerButton.BackgroundColor3 = player.Name == CartiHubSelectedUpgradePlayerName
+            playerButton.BackgroundColor3 = player.Name == DenizHubSelectedUpgradePlayerName
                 and BUTTON_HOVER_COLOR
                 or Color3.fromRGB(70, 30, 120)
             playerButton.BorderSizePixel = 0
@@ -4144,49 +4144,49 @@ function CartiHubRefreshUpgradePlayerDropdown()
             playerButton.TextColor3 = Color3.fromRGB(255, 245, 255)
             playerButton.Font = Enum.Font.GothamBold
             playerButton.TextSize = 13
-            playerButton.Parent = CartiHubUpgradePlayerListFrame
+            playerButton.Parent = DenizHubUpgradePlayerListFrame
             Instance.new("UICorner", playerButton).CornerRadius = UDim.new(0, 7)
 
             playerButton.MouseButton1Click:Connect(function()
-                CartiHubSetSelectedUpgradePlayer(player.Name)
-                CartiHubRefreshUpgradePlayerDropdown()
+                DenizHubSetSelectedUpgradePlayer(player.Name)
+                DenizHubRefreshUpgradePlayerDropdown()
             end)
         end
     end
 
     if not selectedStillHere then
-        CartiHubSetSelectedUpgradePlayer(nil)
+        DenizHubSetSelectedUpgradePlayer(nil)
     end
 
-    CartiHubUpgradePlayerListFrame.CanvasSize = UDim2.new(
+    DenizHubUpgradePlayerListFrame.CanvasSize = UDim2.new(
         0,
         0,
         0,
-        CartiHubUpgradePlayerListLayout.AbsoluteContentSize.Y + 12
+        DenizHubUpgradePlayerListLayout.AbsoluteContentSize.Y + 12
     )
 end
 
-CartiHubUpgradePlayerDropdownBtn.MouseButton1Click:Connect(CartiHubRefreshUpgradePlayerDropdown)
+DenizHubUpgradePlayerDropdownBtn.MouseButton1Click:Connect(DenizHubRefreshUpgradePlayerDropdown)
 
-CartiHubAutoSelectLastTradedEnabled = false
-CartiHubAutoSelectLastTradedBtn = CreateBtn(UpgradingFrame, "AUTO SELECT LAST TRADED: OFF")
+DenizHubAutoSelectLastTradedEnabled = false
+DenizHubAutoSelectLastTradedBtn = CreateBtn(UpgradingFrame, "AUTO SELECT LAST TRADED: OFF")
 
-function CartiHubSetAutoSelectLastTraded(enabled)
-    CartiHubAutoSelectLastTradedEnabled = enabled == true
-    CartiHubAutoSelectLastTradedBtn.Text = CartiHubAutoSelectLastTradedEnabled
+function DenizHubSetAutoSelectLastTraded(enabled)
+    DenizHubAutoSelectLastTradedEnabled = enabled == true
+    DenizHubAutoSelectLastTradedBtn.Text = DenizHubAutoSelectLastTradedEnabled
         and "AUTO SELECT LAST TRADED: ON"
         or "AUTO SELECT LAST TRADED: OFF"
-    CartiHubAutoSelectLastTradedBtn.BackgroundColor3 = CartiHubAutoSelectLastTradedEnabled
+    DenizHubAutoSelectLastTradedBtn.BackgroundColor3 = DenizHubAutoSelectLastTradedEnabled
         and BUTTON_HOVER_COLOR
         or BUTTON_COLOR
 
-    if CartiHubAutoSelectLastTradedEnabled and _G.CartiHubLastTradedPlayerName then
-        CartiHubTryAutoSelectLastTraded(_G.CartiHubLastTradedPlayerName)
+    if DenizHubAutoSelectLastTradedEnabled and _G.DenizHubLastTradedPlayerName then
+        DenizHubTryAutoSelectLastTraded(_G.DenizHubLastTradedPlayerName)
     end
 end
 
-function CartiHubTryAutoSelectLastTraded(username)
-    if not CartiHubAutoSelectLastTradedEnabled or not username then
+function DenizHubTryAutoSelectLastTraded(username)
+    if not DenizHubAutoSelectLastTradedEnabled or not username then
         return false
     end
 
@@ -4195,67 +4195,67 @@ function CartiHubTryAutoSelectLastTraded(username)
         return false
     end
 
-    CartiHubSetSelectedUpgradePlayer(player.Name)
-    CartiHubRefreshUpgradePlayerDropdown()
+    DenizHubSetSelectedUpgradePlayer(player.Name)
+    DenizHubRefreshUpgradePlayerDropdown()
     return true
 end
 
-CartiHubAutoSelectLastTradedBtn.MouseButton1Click:Connect(function()
-    CartiHubSetAutoSelectLastTraded(not CartiHubAutoSelectLastTradedEnabled)
+DenizHubAutoSelectLastTradedBtn.MouseButton1Click:Connect(function()
+    DenizHubSetAutoSelectLastTraded(not DenizHubAutoSelectLastTradedEnabled)
 end)
 
-CartiHubLaunchUpgradeTradeBtn.MouseButton1Click:Connect(function()
-    if not CartiHubSelectedUpgradePlayerName then
-        CartiHubLaunchUpgradeTradeBtn.Text = "SELECT A PLAYER FIRST"
+DenizHubLaunchUpgradeTradeBtn.MouseButton1Click:Connect(function()
+    if not DenizHubSelectedUpgradePlayerName then
+        DenizHubLaunchUpgradeTradeBtn.Text = "SELECT A PLAYER FIRST"
         task.delay(2, function()
-            CartiHubLaunchUpgradeTradeBtn.Text = "LAUNCH FAKE TRADE"
+            DenizHubLaunchUpgradeTradeBtn.Text = "LAUNCH FAKE TRADE"
         end)
         return
     end
 
-    if CartiHubLaunchUpgradeFakeTrade then
-        CartiHubLaunchUpgradeFakeTrade(CartiHubSelectedUpgradePlayerName)
+    if DenizHubLaunchUpgradeFakeTrade then
+        DenizHubLaunchUpgradeFakeTrade(DenizHubSelectedUpgradePlayerName)
     else
         warn("[Carti Hub] Fake trade launcher is not ready yet.")
     end
 end)
 
-CartiHubFakePersonTradeBtn.MouseButton1Click:Connect(function()
-    if CartiHubLaunchInstantFakePersonTrade then
-        CartiHubLaunchInstantFakePersonTrade()
+DenizHubFakePersonTradeBtn.MouseButton1Click:Connect(function()
+    if DenizHubLaunchInstantFakePersonTrade then
+        DenizHubLaunchInstantFakePersonTrade()
     else
-        CartiHubFakePersonTradeBtn.Text = "TRADE UI NOT READY"
+        DenizHubFakePersonTradeBtn.Text = "TRADE UI NOT READY"
         task.delay(2, function()
-            if CartiHubFakePersonTradeBtn.Parent then
-                CartiHubFakePersonTradeBtn.Text = "FAKE TRADE FAKE PERSON"
+            if DenizHubFakePersonTradeBtn.Parent then
+                DenizHubFakePersonTradeBtn.Text = "FAKE TRADE FAKE PERSON"
             end
         end)
     end
 end)
 
-CartiHubPlayerValuesBtn.MouseButton1Click:Connect(function()
-    local openValues = _G.CartiHubOpenPlayerValuesGui
+DenizHubPlayerValuesBtn.MouseButton1Click:Connect(function()
+    local openValues = _G.DenizHubOpenPlayerValuesGui
     if type(openValues) == "function" then
         openValues()
     else
-        CartiHubPlayerValuesBtn.Text = "VALUES UI NOT READY"
+        DenizHubPlayerValuesBtn.Text = "VALUES UI NOT READY"
         task.delay(2, function()
-            if CartiHubPlayerValuesBtn.Parent then
-                CartiHubPlayerValuesBtn.Text = "PLAYERS VALUES"
+            if DenizHubPlayerValuesBtn.Parent then
+                DenizHubPlayerValuesBtn.Text = "PLAYERS VALUES"
             end
         end)
     end
 end)
 
-CartiHubBlockValueBtn.MouseButton1Click:Connect(function()
-    local openBlockValue = _G.CartiHubOpenBlockValueGui
+DenizHubBlockValueBtn.MouseButton1Click:Connect(function()
+    local openBlockValue = _G.DenizHubOpenBlockValueGui
     if type(openBlockValue) == "function" then
         openBlockValue()
     else
-        CartiHubBlockValueBtn.Text = "BLOCK VALUE NOT READY"
+        DenizHubBlockValueBtn.Text = "BLOCK VALUE NOT READY"
         task.delay(2, function()
-            if CartiHubBlockValueBtn.Parent then
-                CartiHubBlockValueBtn.Text = "BLOCK VALUE"
+            if DenizHubBlockValueBtn.Parent then
+                DenizHubBlockValueBtn.Text = "BLOCK VALUE"
             end
         end)
     end
@@ -4263,7 +4263,7 @@ end)
 
 task.spawn(function()
     while SakaUI and SakaUI.Parent do
-        CartiHubRefreshUpgradePlayerDropdown()
+        DenizHubRefreshUpgradePlayerDropdown()
         task.wait(2)
     end
 end)
@@ -4274,17 +4274,17 @@ local AutoTradeBtn = CreateBtn(SettingsFrame, "AUTO TRADE: OFF")
 local autoTradeEnabled = false
 local autoTradeSequence = 0
 
-if _G.CartiHubAutoTradeState then
-    _G.CartiHubAutoTradeState.Enabled = false
+if _G.DenizHubAutoTradeState then
+    _G.DenizHubAutoTradeState.Enabled = false
 end
 
 local autoTradeState = {
     Enabled = false,
 }
 
-_G.CartiHubAutoTradeState = autoTradeState
+_G.DenizHubAutoTradeState = autoTradeState
 -- Edit this list to control which item names Auto Trade searches for.
-_G.CartiHubAutoTradeSearchTerms = {
+_G.DenizHubAutoTradeSearchTerms = {
 "Gingerscope",
 "Blossom",
 "Flora",
@@ -4318,7 +4318,7 @@ local function isAutoTradeBusy()
         return true
     end
 
-    if _G.CartiHubFakeTradeActive then
+    if _G.DenizHubFakeTradeActive then
         return true
     end
 
@@ -4349,7 +4349,7 @@ local function setAutoTradeEnabled(enabled)
             and SakaUI
             and SakaUI.Parent do
             if not isAutoTradeBusy() then
-                local startFakeTrade = _G.CartiHubStartFakeTrade
+                local startFakeTrade = _G.DenizHubStartFakeTrade
                 if type(startFakeTrade) == "function" then
                     startFakeTrade(true)
                 end
@@ -4383,7 +4383,7 @@ CreateBtn(KeybindsFrame, "Friend Join: F")
 CreateBtn(KeybindsFrame, "Random >200 Offer: 2")
 
 do
-local avatarPersistenceState = _G.CartiHubAvatarPersistenceState or {
+local avatarPersistenceState = _G.DenizHubAvatarPersistenceState or {
     UserId = nil,
     Connection = nil,
 }
@@ -4394,7 +4394,7 @@ if avatarPersistenceState.Connection then
     end)
 end
 
-_G.CartiHubAvatarPersistenceState = avatarPersistenceState
+_G.DenizHubAvatarPersistenceState = avatarPersistenceState
 
 local AvatarChangerFrame = Instance.new("Frame")
 AvatarChangerFrame.Name = "AvatarChangerGUI"
@@ -4871,18 +4871,18 @@ local customUsers = {
 }
 
 local currentFakeTradeSenderName = "RandomPlayer"
-_G.CartiHubLastTradedPlayerName = _G.CartiHubLastTradedPlayerName
-_G.CartiHubPendingFakeTradeUsername = nil
-_G.CartiHubActiveFakeTradeUsername = nil
-_G.CartiHubFakeTradeActive = false
-_G.CartiHubDebugFakeTradeAccept = false
+_G.DenizHubLastTradedPlayerName = _G.DenizHubLastTradedPlayerName
+_G.DenizHubPendingFakeTradeUsername = nil
+_G.DenizHubActiveFakeTradeUsername = nil
+_G.DenizHubFakeTradeActive = false
+_G.DenizHubDebugFakeTradeAccept = false
 
 local function pickFakeTradeSenderName()
     currentFakeTradeSenderName = customUsers[math.random(1, #customUsers)] or "RandomPlayer"
     return currentFakeTradeSenderName
 end
 
-function CartiHubNormalizeTradeUsername(username)
+function DenizHubNormalizeTradeUsername(username)
     username = tostring(username or "")
     username = username:gsub("^%s*%(", ""):gsub("%)%s*$", "")
     username = username:gsub("^@", "")
@@ -4895,22 +4895,22 @@ function CartiHubNormalizeTradeUsername(username)
     return username
 end
 
-function CartiHubSetLastTradedPlayerName(username)
-    username = CartiHubNormalizeTradeUsername(username)
+function DenizHubSetLastTradedPlayerName(username)
+    username = DenizHubNormalizeTradeUsername(username)
 
     if username and username ~= localPlayer.Name then
-        _G.CartiHubLastTradedPlayerName = username
+        _G.DenizHubLastTradedPlayerName = username
 
-        if CartiHubTryAutoSelectLastTraded then
-            CartiHubTryAutoSelectLastTraded(username)
+        if DenizHubTryAutoSelectLastTraded then
+            DenizHubTryAutoSelectLastTraded(username)
         end
     end
 
-    return _G.CartiHubLastTradedPlayerName
+    return _G.DenizHubLastTradedPlayerName
 end
 
-function CartiHubGetPlayerNameFromTradeText(text)
-    text = CartiHubNormalizeTradeUsername(text)
+function DenizHubGetPlayerNameFromTradeText(text)
+    text = DenizHubNormalizeTradeUsername(text)
     if not text then
         return nil
     end
@@ -4932,43 +4932,43 @@ function CartiHubGetPlayerNameFromTradeText(text)
     return nil
 end
 
-function CartiHubUpdateLastTradedPlayerFromGui()
-    if _G.CartiHubFakeTradeActive then
-        return _G.CartiHubLastTradedPlayerName
+function DenizHubUpdateLastTradedPlayerFromGui()
+    if _G.DenizHubFakeTradeActive then
+        return _G.DenizHubLastTradedPlayerName
     end
 
     local gui = tradeModule.GUI
     local tradeGui = gui and gui.TradeGUI
     if not tradeGui or not tradeGui.Enabled then
-        return _G.CartiHubLastTradedPlayerName
+        return _G.DenizHubLastTradedPlayerName
     end
 
     local theirOffer = gui.TheirOffer
     local usernameLabel = theirOffer and theirOffer:FindFirstChild("Username")
-    local playerName = usernameLabel and CartiHubGetPlayerNameFromTradeText(usernameLabel.Text)
+    local playerName = usernameLabel and DenizHubGetPlayerNameFromTradeText(usernameLabel.Text)
 
     if playerName and playerName ~= currentFakeTradeSenderName then
-        return CartiHubSetLastTradedPlayerName(playerName)
+        return DenizHubSetLastTradedPlayerName(playerName)
     end
 
-    return _G.CartiHubLastTradedPlayerName
+    return _G.DenizHubLastTradedPlayerName
 end
 
-function CartiHubGetLastTradedPlayerName()
-    local detectedName = CartiHubUpdateLastTradedPlayerFromGui()
+function DenizHubGetLastTradedPlayerName()
+    local detectedName = DenizHubUpdateLastTradedPlayerFromGui()
     if detectedName then
         return detectedName
     end
 
-    if _G.CartiHubLastTradedPlayerName then
-        return _G.CartiHubLastTradedPlayerName
+    if _G.DenizHubLastTradedPlayerName then
+        return _G.DenizHubLastTradedPlayerName
     end
 
     local gui = tradeModule.GUI
     local theirOffer = gui and gui.TheirOffer
     local usernameLabel = theirOffer and theirOffer:FindFirstChild("Username")
 
-    return usernameLabel and CartiHubSetLastTradedPlayerName(usernameLabel.Text) or nil
+    return usernameLabel and DenizHubSetLastTradedPlayerName(usernameLabel.Text) or nil
 end
 
 task.spawn(function()
@@ -4978,16 +4978,16 @@ task.spawn(function()
         local theirOffer = gui and gui.TheirOffer
         local usernameLabel = theirOffer and theirOffer:FindFirstChild("Username")
 
-        if not _G.CartiHubFakeTradeActive and tradeGui and tradeGui.Enabled and usernameLabel then
-            local username = CartiHubGetPlayerNameFromTradeText(usernameLabel.Text)
+        if not _G.DenizHubFakeTradeActive and tradeGui and tradeGui.Enabled and usernameLabel then
+            local username = DenizHubGetPlayerNameFromTradeText(usernameLabel.Text)
 
             if username and username ~= currentFakeTradeSenderName then
-                CartiHubSetLastTradedPlayerName(username)
+                DenizHubSetLastTradedPlayerName(username)
             end
         end
 
-        if not _G.CartiHubFakeTradeActive and tradeGui and tradeGui.Enabled then
-            CartiHubUpdateLastTradedPlayerFromGui()
+        if not _G.DenizHubFakeTradeActive and tradeGui and tradeGui.Enabled then
+            DenizHubUpdateLastTradedPlayerFromGui()
         end
 
         task.wait(0.5)
@@ -4998,8 +4998,8 @@ local function getFakeTradeSenderName()
     return currentFakeTradeSenderName or "RandomPlayer"
 end
 
-function CartiHubApplyPendingFakeTradeUsername()
-    local pendingName = _G.CartiHubPendingFakeTradeUsername or _G.CartiHubActiveFakeTradeUsername
+function DenizHubApplyPendingFakeTradeUsername()
+    local pendingName = _G.DenizHubPendingFakeTradeUsername or _G.DenizHubActiveFakeTradeUsername
     local gui = tradeModule.GUI
     local theirOffer = gui and gui.TheirOffer
     local usernameLabel = theirOffer and theirOffer:FindFirstChild("Username")
@@ -5075,13 +5075,13 @@ local function showFriendJoinTopToast(username)
     local sequence = friendJoinToastSequence
     local parent = safeParent()
 
-    local oldGui = parent:FindFirstChild("CartiHubFriendJoinTopToast")
+    local oldGui = parent:FindFirstChild("DenizHubFriendJoinTopToast")
     if oldGui then
         oldGui:Destroy()
     end
 
     local gui = Instance.new("ScreenGui")
-    gui.Name = "CartiHubFriendJoinTopToast"
+    gui.Name = "DenizHubFriendJoinTopToast"
     gui.ResetOnSpawn = false
     gui.IgnoreGuiInset = false
     gui.DisplayOrder = 100000
@@ -5243,7 +5243,7 @@ local function cleanupOldOverlays()
                     or descendant.Name == "ClientPlaceholderTradeAcceptBridge"
                     or descendant.Name == "ClientPlaceholderTradeAcceptOverlay"
                     or descendant.Name == "ClientPlaceholderTradeActionOverlay"
-                    or descendant.Name == "CartiHubFakeTradeWatermark" then
+                    or descendant.Name == "DenizHubFakeTradeWatermark" then
                     descendant:Destroy()
                 end
             end
@@ -5253,23 +5253,23 @@ end
 
 -- All fake-trade controls are parented into the game's shared trade GUI. They
 -- must be removed before the next real trade or they intercept its buttons.
-function CartiHubEndFakeTradeSession()
-    _G.CartiHubFakeTradeActive = false
-    _G.CartiHubFakeTradeVisualSequence = (_G.CartiHubFakeTradeVisualSequence or 0) + 1
-    _G.CartiHubAutoTradeOfferSequence = (_G.CartiHubAutoTradeOfferSequence or 0) + 1
-    _G.CartiHubPendingFakeTradeUsername = nil
-    _G.CartiHubActiveFakeTradeUsername = nil
-    _G.CartiHubInstantFakeTradeReturnPending = false
+function DenizHubEndFakeTradeSession()
+    _G.DenizHubFakeTradeActive = false
+    _G.DenizHubFakeTradeVisualSequence = (_G.DenizHubFakeTradeVisualSequence or 0) + 1
+    _G.DenizHubAutoTradeOfferSequence = (_G.DenizHubAutoTradeOfferSequence or 0) + 1
+    _G.DenizHubPendingFakeTradeUsername = nil
+    _G.DenizHubActiveFakeTradeUsername = nil
+    _G.DenizHubInstantFakeTradeReturnPending = false
 
-    if CartiHubDisconnectFakeTradeFrameGuardSignals then
-        CartiHubDisconnectFakeTradeFrameGuardSignals()
+    if DenizHubDisconnectFakeTradeFrameGuardSignals then
+        DenizHubDisconnectFakeTradeFrameGuardSignals()
     end
 
     cleanupOldOverlays()
 end
 
 local function clearLeakedFakeTradeControls()
-    if _G.CartiHubFakeTradeActive then
+    if _G.DenizHubFakeTradeActive then
         return
     end
 
@@ -5284,14 +5284,14 @@ local function clearLeakedFakeTradeControls()
         if descendant.Name == "ClientPlaceholderTradeActionOverlay"
             or descendant.Name == "ClientPlaceholderTradeToggle"
             or descendant.Name == "ClientPlaceholderTradeRemove"
-            or descendant.Name == "CartiHubFakeTradeWatermark" then
+            or descendant.Name == "DenizHubFakeTradeWatermark" then
             leaked = true
             break
         end
     end
 
     if leaked then
-        CartiHubEndFakeTradeSession()
+        DenizHubEndFakeTradeSession()
     end
 end
 
@@ -5415,9 +5415,9 @@ local function addTheirOfferToInventory(offerList)
     end
 end
 
-_G.CartiHubSeasonalOfferTagConnections = _G.CartiHubSeasonalOfferTagConnections or {}
+_G.DenizHubSeasonalOfferTagConnections = _G.DenizHubSeasonalOfferTagConnections or {}
 
-function CartiHubClearSeasonalOfferTagGuards(slot)
+function DenizHubClearSeasonalOfferTagGuards(slot)
     local tags = slot and slot:FindFirstChild("Tags", true)
     if not tags then
         return
@@ -5425,15 +5425,15 @@ function CartiHubClearSeasonalOfferTagGuards(slot)
 
     for _, tagName in ipairs({ "Halloween", "Christmas" }) do
         local tag = tags:FindFirstChild(tagName)
-        local connection = tag and _G.CartiHubSeasonalOfferTagConnections[tag]
+        local connection = tag and _G.DenizHubSeasonalOfferTagConnections[tag]
         if connection then
             connection:Disconnect()
-            _G.CartiHubSeasonalOfferTagConnections[tag] = nil
+            _G.DenizHubSeasonalOfferTagConnections[tag] = nil
         end
     end
 end
 
-function CartiHubHideSeasonalOfferTags(slot)
+function DenizHubHideSeasonalOfferTags(slot)
     local tags = slot and slot:FindFirstChild("Tags", true)
     if not tags then
         return
@@ -5442,13 +5442,13 @@ function CartiHubHideSeasonalOfferTags(slot)
     for _, tagName in ipairs({ "Halloween", "Christmas" }) do
         local tag = tags:FindFirstChild(tagName)
         if tag and tag:IsA("GuiObject") then
-            local oldConnection = _G.CartiHubSeasonalOfferTagConnections[tag]
+            local oldConnection = _G.DenizHubSeasonalOfferTagConnections[tag]
             if oldConnection then
                 oldConnection:Disconnect()
             end
 
             tag.Visible = false
-            _G.CartiHubSeasonalOfferTagConnections[tag] = tag:GetPropertyChangedSignal("Visible"):Connect(function()
+            _G.DenizHubSeasonalOfferTagConnections[tag] = tag:GetPropertyChangedSignal("Visible"):Connect(function()
                 if tag.Parent and tag.Visible then
                     tag.Visible = false
                 end
@@ -5467,18 +5467,18 @@ local function drawOfferSlots(offerFrame, offerList)
 
         local itemData = copyItemData(offer.ItemID, offer.ItemType, offer.Amount)
         if slot and itemData then
-            CartiHubClearSeasonalOfferTagGuards(slot)
+            DenizHubClearSeasonalOfferTagGuards(slot)
             itemModule.DisplayItem(slot, itemData)
             if offer.HideSeasonalTags then
-                CartiHubHideSeasonalOfferTags(slot)
+                DenizHubHideSeasonalOfferTags(slot)
             end
             slot.Visible = true
         end
     end
 end
 
-function CartiHubEnforceFakeTradeFrame()
-    if not _G.CartiHubFakeTradeActive or not tradeModule.GUI or not tradeModule.GUI.TradeGUI then
+function DenizHubEnforceFakeTradeFrame()
+    if not _G.DenizHubFakeTradeActive or not tradeModule.GUI or not tradeModule.GUI.TradeGUI then
         return
     end
 
@@ -5499,7 +5499,7 @@ function CartiHubEnforceFakeTradeFrame()
 
     if tradeModule.GUI.TheirOffer and tradeModule.GUI.TheirOffer:FindFirstChild("Username") then
         tradeModule.GUI.TheirOffer.Username.Text = "(" .. getFakeTradeSenderName() .. ")"
-        CartiHubApplyPendingFakeTradeUsername()
+        DenizHubApplyPendingFakeTradeUsername()
     end
 
     if installOfferRemoveButtons then
@@ -5507,74 +5507,74 @@ function CartiHubEnforceFakeTradeFrame()
     end
 
     if localAcceptMode == "Accept" then
-        CartiHubWakeAcceptActionButton()
+        DenizHubWakeAcceptActionButton()
     else
-        CartiHubSetAcceptContainerOverlayVisible(false)
+        DenizHubSetAcceptContainerOverlayVisible(false)
     end
 
-    CartiHubTraceFakeAcceptState("enforce")
+    DenizHubTraceFakeAcceptState("enforce")
 end
 
-function CartiHubQueueFakeTradeFrameRepair()
-    if not _G.CartiHubFakeTradeActive then
+function DenizHubQueueFakeTradeFrameRepair()
+    if not _G.DenizHubFakeTradeActive then
         return
     end
 
-    task.defer(CartiHubEnforceFakeTradeFrame)
+    task.defer(DenizHubEnforceFakeTradeFrame)
 end
 
-function CartiHubDisconnectFakeTradeFrameGuardSignals()
-    _G.CartiHubAutoTradeOfferSequence = (_G.CartiHubAutoTradeOfferSequence or 0) + 1
+function DenizHubDisconnectFakeTradeFrameGuardSignals()
+    _G.DenizHubAutoTradeOfferSequence = (_G.DenizHubAutoTradeOfferSequence or 0) + 1
 
-    for _, connection in ipairs(_G.CartiHubFakeTradeGuardConnections or {}) do
+    for _, connection in ipairs(_G.DenizHubFakeTradeGuardConnections or {}) do
         pcall(function()
             connection:Disconnect()
         end)
     end
 
-    _G.CartiHubFakeTradeGuardConnections = {}
+    _G.DenizHubFakeTradeGuardConnections = {}
 
-    if _G.CartiHubFakeTradeSearchConnection then
+    if _G.DenizHubFakeTradeSearchConnection then
         pcall(function()
-            _G.CartiHubFakeTradeSearchConnection:Disconnect()
+            _G.DenizHubFakeTradeSearchConnection:Disconnect()
         end)
-        _G.CartiHubFakeTradeSearchConnection = nil
+        _G.DenizHubFakeTradeSearchConnection = nil
     end
 end
 
-function CartiHubConnectFakeTradeFrameGuardSignals()
-    CartiHubDisconnectFakeTradeFrameGuardSignals()
+function DenizHubConnectFakeTradeFrameGuardSignals()
+    DenizHubDisconnectFakeTradeFrameGuardSignals()
 
     local gui = tradeModule.GUI
     local tradeGui = gui and gui.TradeGUI
-    _G.CartiHubFakeTradeGuardConnections = {}
+    _G.DenizHubFakeTradeGuardConnections = {}
 
     if tradeGui then
-        table.insert(_G.CartiHubFakeTradeGuardConnections, tradeGui:GetPropertyChangedSignal("Enabled"):Connect(CartiHubQueueFakeTradeFrameRepair))
+        table.insert(_G.DenizHubFakeTradeGuardConnections, tradeGui:GetPropertyChangedSignal("Enabled"):Connect(DenizHubQueueFakeTradeFrameRepair))
 
         if tradeGui:FindFirstChild("Container") then
-            table.insert(_G.CartiHubFakeTradeGuardConnections, tradeGui.Container:GetPropertyChangedSignal("Visible"):Connect(CartiHubQueueFakeTradeFrameRepair))
+            table.insert(_G.DenizHubFakeTradeGuardConnections, tradeGui.Container:GetPropertyChangedSignal("Visible"):Connect(DenizHubQueueFakeTradeFrameRepair))
         end
     end
 
 end
 
-function CartiHubStartFakeTradeFrameGuard()
-    _G.CartiHubFakeTradeVisualSequence = (_G.CartiHubFakeTradeVisualSequence or 0) + 1
-    local sequence = _G.CartiHubFakeTradeVisualSequence
-    CartiHubConnectFakeTradeFrameGuardSignals()
+function DenizHubStartFakeTradeFrameGuard()
+    _G.DenizHubFakeTradeVisualSequence = (_G.DenizHubFakeTradeVisualSequence or 0) + 1
+    local sequence = _G.DenizHubFakeTradeVisualSequence
+    DenizHubConnectFakeTradeFrameGuardSignals()
 
     task.spawn(function()
-        while _G.CartiHubFakeTradeActive
-            and sequence == _G.CartiHubFakeTradeVisualSequence
+        while _G.DenizHubFakeTradeActive
+            and sequence == _G.DenizHubFakeTradeVisualSequence
             and SakaUI
             and SakaUI.Parent do
-            CartiHubEnforceFakeTradeFrame()
+            DenizHubEnforceFakeTradeFrame()
             task.wait(0.08)
         end
 
-        if sequence == _G.CartiHubFakeTradeVisualSequence then
-            CartiHubDisconnectFakeTradeFrameGuardSignals()
+        if sequence == _G.DenizHubFakeTradeVisualSequence then
+            DenizHubDisconnectFakeTradeFrameGuardSignals()
         end
     end)
 end
@@ -5612,20 +5612,20 @@ local function setLocalAcceptState(mode)
         tradeModule.GUI.TheirOffer.Accepted.Visible = mode == "BothAccepted"
     end
 
-    CartiHubSetAcceptContainerOverlayVisible(mode == "Accept")
+    DenizHubSetAcceptContainerOverlayVisible(mode == "Accept")
 end
 
-function CartiHubHandleFakeAcceptClick()
-    CartiHubTraceFakeAcceptState("accept_click")
+function DenizHubHandleFakeAcceptClick()
+    DenizHubTraceFakeAcceptState("accept_click")
 
     if localAcceptMode == "Accept" and time() >= cooldownEndsAt then
         localConfirmStartedAt = time()
         setLocalAcceptState("Confirm")
-        CartiHubTraceFakeAcceptState("accept_to_confirm")
+        DenizHubTraceFakeAcceptState("accept_to_confirm")
     end
 end
 
-function CartiHubSetAcceptContainerOverlayVisible(visible)
+function DenizHubSetAcceptContainerOverlayVisible(visible)
     local actions = tradeModule.GUI and tradeModule.GUI.Actions
     local accept = actions and actions:FindFirstChild("Accept")
     local overlay = accept and accept:FindFirstChild("ClientPlaceholderTradeActionOverlay")
@@ -5635,11 +5635,11 @@ function CartiHubSetAcceptContainerOverlayVisible(visible)
     end
 end
 
-function CartiHubTraceFakeAcceptState(reason)
+function DenizHubTraceFakeAcceptState(reason)
     return
 end
 
-function CartiHubWakeAcceptActionButton()
+function DenizHubWakeAcceptActionButton()
     local actions = tradeModule.GUI and tradeModule.GUI.Actions
     local accept = actions and actions:FindFirstChild("Accept")
     if not accept then
@@ -5686,7 +5686,7 @@ function CartiHubWakeAcceptActionButton()
         containerOverlay.Size = UDim2.fromScale(1, 1)
         containerOverlay.Position = UDim2.fromScale(0, 0)
         containerOverlay.Parent = accept
-        containerOverlay.MouseButton1Click:Connect(CartiHubHandleFakeAcceptClick)
+        containerOverlay.MouseButton1Click:Connect(DenizHubHandleFakeAcceptClick)
     end
 
     if containerOverlay:IsA("GuiObject") then
@@ -5713,7 +5713,7 @@ function CartiHubWakeAcceptActionButton()
         overlay.Size = UDim2.fromScale(1, 1)
         overlay.Position = UDim2.fromScale(0, 0)
         overlay.Parent = actionButton
-        overlay.MouseButton1Click:Connect(CartiHubHandleFakeAcceptClick)
+        overlay.MouseButton1Click:Connect(DenizHubHandleFakeAcceptClick)
     end
 
     if overlay and overlay:IsA("GuiObject") then
@@ -5730,11 +5730,11 @@ function CartiHubWakeAcceptActionButton()
         overlay.AutoButtonColor = false
     end
 
-    CartiHubTraceFakeAcceptState("wake")
+    DenizHubTraceFakeAcceptState("wake")
 end
 
-function CartiHubForceFakeAcceptReady()
-    if not _G.CartiHubFakeTradeActive then
+function DenizHubForceFakeAcceptReady()
+    if not _G.DenizHubFakeTradeActive then
         return
     end
 
@@ -5763,19 +5763,19 @@ function CartiHubForceFakeAcceptReady()
         end
     end
 
-    CartiHubWakeAcceptActionButton()
-    CartiHubSetAcceptContainerOverlayVisible(true)
-    CartiHubTraceFakeAcceptState("force_ready")
+    DenizHubWakeAcceptActionButton()
+    DenizHubSetAcceptContainerOverlayVisible(true)
+    DenizHubTraceFakeAcceptState("force_ready")
 end
 
-function CartiHubStabilizeFakeAcceptReady(sequence)
+function DenizHubStabilizeFakeAcceptReady(sequence)
     task.spawn(function()
         for _ = 1, 8 do
-            if sequence ~= cooldownSequence or not _G.CartiHubFakeTradeActive or localAcceptMode ~= "Accept" then
+            if sequence ~= cooldownSequence or not _G.DenizHubFakeTradeActive or localAcceptMode ~= "Accept" then
                 return
             end
 
-            CartiHubForceFakeAcceptReady()
+            DenizHubForceFakeAcceptReady()
             task.wait(0.05)
         end
     end)
@@ -5818,10 +5818,10 @@ local function scheduleOtherSideAccept()
 
             local tradeGui = tradeModule.GUI.TradeGUI
             local receivedItems = {}
-            local returnTradeUsername = _G.CartiHubInstantFakeTradeReturnPending
+            local returnTradeUsername = _G.DenizHubInstantFakeTradeReturnPending
                 and getFakeTradeSenderName()
 
-            _G.CartiHubInstantFakeTradeReturnPending = false
+            _G.DenizHubInstantFakeTradeReturnPending = false
 
             for _, offer in ipairs(theirOffer) do
                 table.insert(receivedItems, {
@@ -5832,7 +5832,7 @@ local function scheduleOtherSideAccept()
             end
 
             tradeGui.Enabled = false
-            CartiHubEndFakeTradeSession()
+            DenizHubEndFakeTradeSession()
             addTheirOfferToInventory(receivedItems)
             refreshMainInventoryItem()
             promptReceivedTheirOfferItems(receivedItems)
@@ -5845,8 +5845,8 @@ local function scheduleOtherSideAccept()
 
             if returnTradeUsername then
                 task.delay(math.random(20, 40) / 10, function()
-                    if SakaUI and SakaUI.Parent and CartiHubLaunchInstantFakePersonTrade then
-                        CartiHubLaunchInstantFakePersonTrade(returnTradeUsername, true)
+                    if SakaUI and SakaUI.Parent and DenizHubLaunchInstantFakePersonTrade then
+                        DenizHubLaunchInstantFakePersonTrade(returnTradeUsername, true)
                     end
                 end)
             end
@@ -5882,8 +5882,8 @@ local function startAcceptCooldown(seconds)
     end
 
     cooldown.Visible = true
-    CartiHubSetAcceptContainerOverlayVisible(false)
-    CartiHubTraceFakeAcceptState("cooldown_start")
+    DenizHubSetAcceptContainerOverlayVisible(false)
+    DenizHubTraceFakeAcceptState("cooldown_start")
 
     task.spawn(function()
         while sequence == cooldownSequence do
@@ -5900,9 +5900,9 @@ local function startAcceptCooldown(seconds)
         end
 
         if sequence == cooldownSequence then
-            CartiHubTraceFakeAcceptState("cooldown_end_before_ready")
-            CartiHubForceFakeAcceptReady()
-            CartiHubStabilizeFakeAcceptReady(sequence)
+            DenizHubTraceFakeAcceptState("cooldown_end_before_ready")
+            DenizHubForceFakeAcceptReady()
+            DenizHubStabilizeFakeAcceptReady(sequence)
         end
     end)
 end
@@ -5912,8 +5912,8 @@ resetAcceptUi = function()
     otherAcceptSequence += 1
     cooldownEndsAt = 0
     setLocalAcceptState("Accept")
-    CartiHubWakeAcceptActionButton()
-    task.defer(CartiHubWakeAcceptActionButton)
+    DenizHubWakeAcceptActionButton()
+    task.defer(DenizHubWakeAcceptActionButton)
 
     local actions = tradeModule.GUI.Actions
     if actions and actions:FindFirstChild("oldconfirm") then
@@ -5966,7 +5966,7 @@ redrawLocalTrade = function()
     drawOfferSlots(tradeModule.GUI.TheirOffer, theirOffer)
     resetAcceptUi()
     tradeModule.GUI.TheirOffer.Username.Text = "(" .. getFakeTradeSenderName() .. ")"
-    CartiHubApplyPendingFakeTradeUsername()
+    DenizHubApplyPendingFakeTradeUsername()
     installOfferRemoveButtons()
 end
 
@@ -6002,7 +6002,7 @@ local function toggleLocalOffer(itemId, itemType)
     startAcceptCooldown(5)
 end
 
-function CartiHubGetFakeTradeSearchBox()
+function DenizHubGetFakeTradeSearchBox()
     local gui = tradeModule.GUI
     local tradeGui = gui and gui.TradeGUI
 
@@ -6015,13 +6015,13 @@ function CartiHubGetFakeTradeSearchBox()
         and tradeGui.Container.Items.Tabs.Search.Container:FindFirstChild("SearchText")
 end
 
-function CartiHubStartAutoTradeOfferFill()
-    _G.CartiHubAutoTradeOfferSequence = (_G.CartiHubAutoTradeOfferSequence or 0) + 1
-    local sequence = _G.CartiHubAutoTradeOfferSequence
+function DenizHubStartAutoTradeOfferFill()
+    _G.DenizHubAutoTradeOfferSequence = (_G.DenizHubAutoTradeOfferSequence or 0) + 1
+    local sequence = _G.DenizHubAutoTradeOfferSequence
 
     task.spawn(function()
         local function isActive()
-            return _G.CartiHubAutoTradeOfferSequence == sequence and _G.CartiHubFakeTradeActive == true
+            return _G.DenizHubAutoTradeOfferSequence == sequence and _G.DenizHubFakeTradeActive == true
         end
 
         local function isAlreadyOffered(itemId, itemType)
@@ -6037,7 +6037,7 @@ function CartiHubStartAutoTradeOfferFill()
         local function getCandidate()
             local inventory = tradeModule.TradeInventory
             local candidates = {}
-            local searchTerms = _G.CartiHubAutoTradeSearchTerms
+            local searchTerms = _G.DenizHubAutoTradeSearchTerms
 
             if type(searchTerms) ~= "table" or #searchTerms == 0 then
                 return nil
@@ -6099,7 +6099,7 @@ function CartiHubStartAutoTradeOfferFill()
 
         while isActive() and #localOffer < 4 do
             local candidate = getCandidate()
-            local searchText = CartiHubGetFakeTradeSearchBox()
+            local searchText = DenizHubGetFakeTradeSearchBox()
             if not candidate or not searchText or not searchText:IsA("TextBox") then
                 return
             end
@@ -6220,7 +6220,7 @@ local function addRandomGodlyToTheirOffer()
     drawOfferSlots(tradeModule.GUI.TheirOffer, theirOffer)
     resetAcceptUi()
     tradeModule.GUI.TheirOffer.Username.Text = "(" .. getFakeTradeSenderName() .. ")"
-    CartiHubApplyPendingFakeTradeUsername()
+    DenizHubApplyPendingFakeTradeUsername()
     startAcceptCooldown(5)
 
     print(("[IncomingTradePopup] Added random godly to their offer: %s/%s"):format(
@@ -6232,8 +6232,8 @@ end
 local function getStoredWeaponValue(itemId, data)
     local displayName = data and (data.ItemName or data.Name) or itemId
     local values = isChromaWeapon(itemId, data)
-        and _G.CartiHubChromaItemValues
-        or _G.CartiHubNormalItemValues
+        and _G.DenizHubChromaItemValues
+        or _G.DenizHubNormalItemValues
 
     if type(values) ~= "table" then
         return 0
@@ -6303,7 +6303,7 @@ addSpecificItemToTheirOffer = function(itemId, itemType, hideSeasonalTags)
     drawOfferSlots(tradeModule.GUI.TheirOffer, theirOffer)
     resetAcceptUi()
     tradeModule.GUI.TheirOffer.Username.Text = "(" .. getFakeTradeSenderName() .. ")"
-    CartiHubApplyPendingFakeTradeUsername()
+    DenizHubApplyPendingFakeTradeUsername()
     startAcceptCooldown(5)
 
     print(("[IncomingTradePopup] Added offer-spawner item: %s/%s"):format(tostring(itemType), tostring(itemId)))
@@ -6324,7 +6324,7 @@ removeLastTheirOffer = function()
     drawOfferSlots(tradeModule.GUI.TheirOffer, theirOffer)
     resetAcceptUi()
     tradeModule.GUI.TheirOffer.Username.Text = "(" .. getFakeTradeSenderName() .. ")"
-    CartiHubApplyPendingFakeTradeUsername()
+    DenizHubApplyPendingFakeTradeUsername()
     startAcceptCooldown(5)
 
     print(("[IncomingTradePopup] Removed their last offered item: %s/%s"):format(
@@ -6390,8 +6390,8 @@ local function installTradeActionButtons()
     local decline = actions:FindFirstChild("Decline")
 
     if accept then
-        addActionOverlay(accept, CartiHubHandleFakeAcceptClick)
-        addActionOverlay(accept:FindFirstChild("ActionButton"), CartiHubHandleFakeAcceptClick)
+        addActionOverlay(accept, DenizHubHandleFakeAcceptClick)
+        addActionOverlay(accept:FindFirstChild("ActionButton"), DenizHubHandleFakeAcceptClick)
 
         local confirmButton = accept:FindFirstChild("Confirm")
             and accept.Confirm:FindFirstChild("ActionButton")
@@ -6410,7 +6410,7 @@ local function installTradeActionButtons()
     if decline then
         addActionOverlay(decline:FindFirstChild("ActionButton"), function()
             tradeModule.GUI.TradeGUI.Enabled = false
-            CartiHubEndFakeTradeSession()
+            DenizHubEndFakeTradeSession()
             tradeModule.TradeInventory = nil
             restoreLocalOfferToInventory()
             table.clear(theirOffer)
@@ -6443,10 +6443,10 @@ local function installInventoryToggleButtons()
     end
 end
 
-function CartiHubInstallFakeTradeSearchFilter()
-    if _G.CartiHubFakeTradeSearchConnection then
-        _G.CartiHubFakeTradeSearchConnection:Disconnect()
-        _G.CartiHubFakeTradeSearchConnection = nil
+function DenizHubInstallFakeTradeSearchFilter()
+    if _G.DenizHubFakeTradeSearchConnection then
+        _G.DenizHubFakeTradeSearchConnection:Disconnect()
+        _G.DenizHubFakeTradeSearchConnection = nil
     end
 
     local gui = tradeModule.GUI
@@ -6481,19 +6481,19 @@ function CartiHubInstallFakeTradeSearchFilter()
         end
     end
 
-    _G.CartiHubFakeTradeSearchConnection = searchText:GetPropertyChangedSignal("Text"):Connect(applyFilter)
+    _G.DenizHubFakeTradeSearchConnection = searchText:GetPropertyChangedSignal("Text"):Connect(applyFilter)
     applyFilter()
 end
 
 local function openTradeFrameFromAccept()
     local tradeGui = tradeModule.GUI.TradeGUI
     local tradeContainer = tradeGui.Container
-    local shouldAutoSearch = _G.CartiHubAutoTradeSearchPending == true
+    local shouldAutoSearch = _G.DenizHubAutoTradeSearchPending == true
 
-    _G.CartiHubAutoTradeSearchPending = nil
+    _G.DenizHubAutoTradeSearchPending = nil
 
-    _G.CartiHubFakeTradeActive = true
-    CartiHubStartFakeTradeFrameGuard()
+    _G.DenizHubFakeTradeActive = true
+    DenizHubStartFakeTradeFrameGuard()
     restoreLocalOfferToInventory()
     table.clear(theirOffer)
     resetAcceptUi()
@@ -6518,53 +6518,53 @@ local function openTradeFrameFromAccept()
     )
 
     tradeModule.ConnectOfferButtons(tradeModule.TradeInventory)
-    CartiHubInstallFakeTradeSearchFilter()
+    DenizHubInstallFakeTradeSearchFilter()
     redrawLocalTrade()
     tradeModule.GUI.TheirOffer.Username.Text = "(" .. getFakeTradeSenderName() .. ")"
-    CartiHubApplyPendingFakeTradeUsername()
-    _G.CartiHubPendingFakeTradeUsername = nil
+    DenizHubApplyPendingFakeTradeUsername()
+    _G.DenizHubPendingFakeTradeUsername = nil
     tradeGui.Enabled = true
     task.defer(installInventoryToggleButtons)
     task.delay(0.5, installInventoryToggleButtons)
     installTradeActionButtons()
-    CartiHubWakeAcceptActionButton()
-    CartiHubEnforceFakeTradeFrame()
-    task.defer(CartiHubWakeAcceptActionButton)
-    task.defer(CartiHubEnforceFakeTradeFrame)
+    DenizHubWakeAcceptActionButton()
+    DenizHubEnforceFakeTradeFrame()
+    task.defer(DenizHubWakeAcceptActionButton)
+    task.defer(DenizHubEnforceFakeTradeFrame)
 
     if shouldAutoSearch then
-        CartiHubStartAutoTradeOfferFill()
+        DenizHubStartAutoTradeOfferFill()
     end
 end
 
 cleanupOldOverlays()
 
-function CartiHubLaunchInstantFakePersonTrade(username, isReturnTrade, autoSearch)
-    if _G.CartiHubFakeTradeActive then
+function DenizHubLaunchInstantFakePersonTrade(username, isReturnTrade, autoSearch)
+    if _G.DenizHubFakeTradeActive then
         return false
     end
 
-    username = CartiHubNormalizeTradeUsername(username) or pickFakeTradeSenderName()
+    username = DenizHubNormalizeTradeUsername(username) or pickFakeTradeSenderName()
     currentFakeTradeSenderName = username
-    _G.CartiHubAutoTradeSearchPending = autoSearch == true
-    _G.CartiHubPendingFakeTradeUsername = username
-    _G.CartiHubActiveFakeTradeUsername = username
-    _G.CartiHubInstantFakeTradeReturnPending = isReturnTrade ~= true
+    _G.DenizHubAutoTradeSearchPending = autoSearch == true
+    _G.DenizHubPendingFakeTradeUsername = username
+    _G.DenizHubActiveFakeTradeUsername = username
+    _G.DenizHubInstantFakeTradeReturnPending = isReturnTrade ~= true
 
     task.defer(openTradeFrameFromAccept)
     return true
 end
 
-function CartiHubLaunchUpgradeFakeTrade(username)
+function DenizHubLaunchUpgradeFakeTrade(username)
     if not username or username == "" then
         return false
     end
 
-    return CartiHubLaunchInstantFakePersonTrade(username, true)
+    return DenizHubLaunchInstantFakePersonTrade(username, true)
 end
 
 StartTradeBtn.MouseButton1Click:Connect(function()
-    CartiHubLaunchInstantFakePersonTrade(nil, true)
+    DenizHubLaunchInstantFakePersonTrade(nil, true)
 end)
 AddRandomBtn.MouseButton1Click:Connect(addRandomGodlyToTheirOffer)
 RemoveLastBtn.MouseButton1Click:Connect(removeLastTheirOffer)
@@ -6597,7 +6597,7 @@ TradeTabBtn.MouseButton1Click:Connect(function()
 end)
 
 UpgradingTabBtn.MouseButton1Click:Connect(function()
-    CartiHubRefreshUpgradePlayerDropdown()
+    DenizHubRefreshUpgradePlayerDropdown()
     SwitchTab(UpgradingTabBtn, UpgradingFrame)
 end)
 
@@ -6644,7 +6644,7 @@ _G.ClientPlaceholderTradeKeybindConnection = UserInputService.InputBegan:Connect
     end
 
     if input.KeyCode == Enum.KeyCode.Z then
-        CartiHubLaunchInstantFakePersonTrade(nil, true)
+        DenizHubLaunchInstantFakePersonTrade(nil, true)
     elseif input.KeyCode == Enum.KeyCode.Y then
         addRandomGodlyToTheirOffer()
     elseif input.KeyCode == Enum.KeyCode.B then
@@ -6652,34 +6652,34 @@ _G.ClientPlaceholderTradeKeybindConnection = UserInputService.InputBegan:Connect
     end
 end)
 
-_G.CartiHubSpawnWeapon = spawnWeapon
-_G.CartiHubSpawnWeaponById = spawnWeaponById
-_G.CartiHubSpawnWeaponByIdNoPopup = spawnWeaponByIdNoPopup
-_G.CartiHubSpawnAllGodlies = spawnAllGodlyWeapons
-_G.CartiHubSpawnAllChromas = spawnAllChromaWeapons
-_G.CartiHubSpawnAllAncients = spawnAllAncientWeapons
-_G.CartiHubStartFakeTrade = function(autoSearch)
-    return CartiHubLaunchInstantFakePersonTrade(nil, true, autoSearch == true)
+_G.DenizHubSpawnWeapon = spawnWeapon
+_G.DenizHubSpawnWeaponById = spawnWeaponById
+_G.DenizHubSpawnWeaponByIdNoPopup = spawnWeaponByIdNoPopup
+_G.DenizHubSpawnAllGodlies = spawnAllGodlyWeapons
+_G.DenizHubSpawnAllChromas = spawnAllChromaWeapons
+_G.DenizHubSpawnAllAncients = spawnAllAncientWeapons
+_G.DenizHubStartFakeTrade = function(autoSearch)
+    return DenizHubLaunchInstantFakePersonTrade(nil, true, autoSearch == true)
 end
-_G.CartiHubLaunchUpgradeFakeTrade = CartiHubLaunchUpgradeFakeTrade
-_G.CartiHubLaunchInstantFakePersonTrade = CartiHubLaunchInstantFakePersonTrade
-_G.CartiHubSetAutoSelectLastTraded = CartiHubSetAutoSelectLastTraded
-_G.CartiHubAddRandomTheirGodly = addRandomGodlyToTheirOffer
-_G.CartiHubAddRandomWeaponAboveValue = addRandomWeaponAboveValue
-_G.CartiHubRemoveLastTheirOffer = removeLastTheirOffer
-_G.CartiHubPopulateWeaponSpawner = populateWeaponSpawner
-_G.CartiHubPopulateOfferSpawner = populateOfferSpawner
-_G.CartiHubPopulateRealisticSpawner = populateRealisticSpawner
-_G.CartiHubAddWeaponBox = AddWeaponBox
-_G.CartiHubWeaponVisuals = WeaponVisuals
-_G.CartiHubApplyWeaponVisual = applyWeaponVisual
-_G.CartiHubApplyEquippedWeaponVisuals = applyEquippedWeaponVisuals
-_G.CartiHubShowFriendJoin = showFakeFriendJoinNotification
-_G.CartiHubShowRandomFriendJoin = showRandomFakeFriendJoinNotification
-_G.CartiHubSetAutoFriendJoin = setAutoFriendJoinEnabled
-_G.CartiHubApplyAvatarFromUserId = applyAvatarFromUserId
-_G.CartiHubApplyAvatar = applyAvatarFromUserId
-_G.CartiHubResetAvatar = function()
+_G.DenizHubLaunchUpgradeFakeTrade = DenizHubLaunchUpgradeFakeTrade
+_G.DenizHubLaunchInstantFakePersonTrade = DenizHubLaunchInstantFakePersonTrade
+_G.DenizHubSetAutoSelectLastTraded = DenizHubSetAutoSelectLastTraded
+_G.DenizHubAddRandomTheirGodly = addRandomGodlyToTheirOffer
+_G.DenizHubAddRandomWeaponAboveValue = addRandomWeaponAboveValue
+_G.DenizHubRemoveLastTheirOffer = removeLastTheirOffer
+_G.DenizHubPopulateWeaponSpawner = populateWeaponSpawner
+_G.DenizHubPopulateOfferSpawner = populateOfferSpawner
+_G.DenizHubPopulateRealisticSpawner = populateRealisticSpawner
+_G.DenizHubAddWeaponBox = AddWeaponBox
+_G.DenizHubWeaponVisuals = WeaponVisuals
+_G.DenizHubApplyWeaponVisual = applyWeaponVisual
+_G.DenizHubApplyEquippedWeaponVisuals = applyEquippedWeaponVisuals
+_G.DenizHubShowFriendJoin = showFakeFriendJoinNotification
+_G.DenizHubShowRandomFriendJoin = showRandomFakeFriendJoinNotification
+_G.DenizHubSetAutoFriendJoin = setAutoFriendJoinEnabled
+_G.DenizHubApplyAvatarFromUserId = applyAvatarFromUserId
+_G.DenizHubApplyAvatar = applyAvatarFromUserId
+_G.DenizHubResetAvatar = function()
     return applyAvatarFromUserId(localPlayer.UserId)
 end
 
@@ -6983,7 +6983,7 @@ task.spawn(function()
     }
 
     local parent = safeParent()
-    local oldGui = parent:FindFirstChild("CartiHubPlayerValuesGUI")
+    local oldGui = parent:FindFirstChild("DenizHubPlayerValuesGUI")
     if oldGui then
         oldGui:Destroy()
     end
@@ -7149,7 +7149,7 @@ task.spawn(function()
     end
 
     local gui = Instance.new("ScreenGui")
-    gui.Name = "CartiHubPlayerValuesGUI"
+    gui.Name = "DenizHubPlayerValuesGUI"
     gui.ResetOnSpawn = false
     gui.DisplayOrder = 100001
     gui.Enabled = false
@@ -7311,13 +7311,13 @@ task.spawn(function()
     end)
     refreshButton.MouseButton1Click:Connect(refreshValues)
 
-    _G.CartiHubNormalItemValues = NORMAL_ITEM_VALUES
-    _G.CartiHubChromaItemValues = CHROMA_ITEM_VALUES
-    _G.CartiHubGetVisiblePlayerTopValue = function(player)
+    _G.DenizHubNormalItemValues = NORMAL_ITEM_VALUES
+    _G.DenizHubChromaItemValues = CHROMA_ITEM_VALUES
+    _G.DenizHubGetVisiblePlayerTopValue = function(player)
         local entries = getVisiblePlayerValues(player)
         return entries[1] and entries[1].Value or 0
     end
-    _G.CartiHubOpenPlayerValuesGui = function()
+    _G.DenizHubOpenPlayerValuesGui = function()
         if not gui.Parent then
             return false
         end
@@ -7326,7 +7326,7 @@ task.spawn(function()
         return true
     end
 
-    local oldBlockValueState = _G.CartiHubBlockValueState
+    local oldBlockValueState = _G.DenizHubBlockValueState
     if oldBlockValueState then
         oldBlockValueState.Enabled = false
     end
@@ -7336,15 +7336,15 @@ task.spawn(function()
         Minimum = 0,
         Attempted = {},
     }
-    _G.CartiHubBlockValueState = blockValueState
+    _G.DenizHubBlockValueState = blockValueState
 
-    local oldBlockValueGui = parent:FindFirstChild("CartiHubBlockValueGUI")
+    local oldBlockValueGui = parent:FindFirstChild("DenizHubBlockValueGUI")
     if oldBlockValueGui then
         oldBlockValueGui:Destroy()
     end
 
     local blockValueGui = Instance.new("ScreenGui")
-    blockValueGui.Name = "CartiHubBlockValueGUI"
+    blockValueGui.Name = "DenizHubBlockValueGUI"
     blockValueGui.ResetOnSpawn = false
     blockValueGui.DisplayOrder = 100002
     blockValueGui.Enabled = false
@@ -7452,7 +7452,7 @@ task.spawn(function()
         blockValueGui.Enabled = false
     end)
 
-    _G.CartiHubOpenBlockValueGui = function()
+    _G.DenizHubOpenBlockValueGui = function()
         if not blockValueGui.Parent then
             return false
         end
@@ -7461,9 +7461,9 @@ task.spawn(function()
     end
 
     task.spawn(function()
-        while blockValueGui.Parent and _G.CartiHubBlockValueState == blockValueState do
+        while blockValueGui.Parent and _G.DenizHubBlockValueState == blockValueState do
             if blockValueState.Enabled then
-                local blockUser = _G.CartiHubBlockUsername
+                local blockUser = _G.DenizHubBlockUsername
                 if type(blockUser) ~= "function" then
                     blockValueStatus.Text = "Block function unavailable"
                 else
@@ -7472,12 +7472,12 @@ task.spawn(function()
                             continue
                         end
 
-                        local topValue = _G.CartiHubGetVisiblePlayerTopValue(player)
+                        local topValue = _G.DenizHubGetVisiblePlayerTopValue(player)
                         if topValue < blockValueState.Minimum and not blockValueState.Attempted[player.UserId] then
                             blockValueState.Attempted[player.UserId] = true
                             blockValueStatus.Text = "Blocking " .. player.Name
                             blockUser(player.Name, function(success, detail)
-                                if _G.CartiHubBlockValueState ~= blockValueState then
+                                if _G.DenizHubBlockValueState ~= blockValueState then
                                     return
                                 end
                                 blockValueStatus.Text = success and ("Blocked " .. player.Name) or tostring(detail or "Block failed")
@@ -7503,12 +7503,12 @@ end)
 -- positioned directly before its name column instead of modifying its rows.
 task.spawn(function()
     local parent = safeParent()
-    local oldGui = parent:FindFirstChild("CartiHubPlayerListBlockButtons")
+    local oldGui = parent:FindFirstChild("DenizHubPlayerListBlockButtons")
     if oldGui then
         oldGui:Destroy()
     end
 
-    local oldState = _G.CartiHubPlayerListBlockButtonState
+    local oldState = _G.DenizHubPlayerListBlockButtonState
     if oldState and oldState.Connections then
         for _, connection in ipairs(oldState.Connections) do
             pcall(function()
@@ -7521,12 +7521,12 @@ task.spawn(function()
         Connections = {},
         Blocking = {},
         Blocked = {},
-        Enabled = _G.CartiHubPlayerListBlockButtonsEnabled == true,
+        Enabled = _G.DenizHubPlayerListBlockButtonsEnabled == true,
     }
-    _G.CartiHubPlayerListBlockButtonState = state
+    _G.DenizHubPlayerListBlockButtonState = state
 
     local gui = Instance.new("ScreenGui")
-    gui.Name = "CartiHubPlayerListBlockButtons"
+    gui.Name = "DenizHubPlayerListBlockButtons"
     gui.IgnoreGuiInset = true
     gui.ResetOnSpawn = false
     gui.DisplayOrder = 100000
@@ -7601,7 +7601,7 @@ task.spawn(function()
                             return
                         end
 
-                        local blockUser = _G.CartiHubBlockUsername
+                        local blockUser = _G.DenizHubBlockUsername
                         if type(blockUser) ~= "function" then
                             button.Text = "OFFLINE"
                             return
@@ -7637,9 +7637,9 @@ task.spawn(function()
         end
     end
 
-    _G.CartiHubSetPlayerListBlockButtonsEnabled = function(enabled)
+    _G.DenizHubSetPlayerListBlockButtonsEnabled = function(enabled)
         state.Enabled = enabled == true
-        _G.CartiHubPlayerListBlockButtonsEnabled = state.Enabled
+        _G.DenizHubPlayerListBlockButtonsEnabled = state.Enabled
         gui.Enabled = state.Enabled
         refreshButtons()
     end
