@@ -64,29 +64,29 @@ end
 
 -- Spawned stacks are display-only. Keep them separate from the profile table,
 -- because MM2 can replace that table when a real copy of an item is received.
-_G.CartiHubFakeInventoryAmounts = _G.CartiHubFakeInventoryAmounts or {}
+_G.DenizHubFakeInventoryAmounts = _G.DenizHubFakeInventoryAmounts or {}
 
 function CartiHubGetFakeInventoryKey(itemId, itemType)
     local bucket = itemType == "Item" and "Weapons" or tostring(itemType)
     return bucket .. ":" .. tostring(itemId)
 end
 
-function CartiHubGetFakeInventoryAmount(itemId, itemType)
-    return tonumber(_G.CartiHubFakeInventoryAmounts[CartiHubGetFakeInventoryKey(itemId, itemType)]) or 0
+function DenizHubGetFakeInventoryAmount(itemId, itemType)
+    return tonumber(_G.DenizHubFakeInventoryAmounts[CartiHubGetFakeInventoryKey(itemId, itemType)]) or 0
 end
 
-function CartiHubSetFakeInventoryAmount(itemId, itemType, amount)
+function DenizHubSetFakeInventoryAmount(itemId, itemType, amount)
     local key = CartiHubGetFakeInventoryKey(itemId, itemType)
     local owned = getProfileOwnedTable(itemType)
     amount = math.max(0, math.floor(tonumber(amount) or 0))
 
     if amount > 0 then
-        _G.CartiHubFakeInventoryAmounts[key] = amount
+        _G.DenizHubFakeInventoryAmounts[key] = amount
         if owned then
             owned[itemId] = amount
         end
     else
-        _G.CartiHubFakeInventoryAmounts[key] = nil
+        _G.DenizHubFakeInventoryAmounts[key] = nil
         if owned then
             owned[itemId] = nil
         end
@@ -95,11 +95,11 @@ function CartiHubSetFakeInventoryAmount(itemId, itemType, amount)
     return amount
 end
 
-function CartiHubAddFakeInventoryAmount(itemId, itemType, delta)
-    return CartiHubSetFakeInventoryAmount(
+function DenizHubAddFakeInventoryAmount(itemId, itemType, delta)
+    return DenizHubSetFakeInventoryAmount(
         itemId,
         itemType,
-        CartiHubGetFakeInventoryAmount(itemId, itemType) + (tonumber(delta) or 0)
+        DenizHubGetFakeInventoryAmount(itemId, itemType) + (tonumber(delta) or 0)
     )
 end
 
@@ -173,7 +173,7 @@ task.spawn(function()
     while SakaUI == nil or SakaUI.Parent ~= nil do
         local corrected = false
 
-        for key, amount in pairs(_G.CartiHubFakeInventoryAmounts) do
+        for key, amount in pairs(_G.DenizHubFakeInventoryAmounts) do
             local itemType, itemId = string.match(key, "^([^:]+):(.+)$")
             local owned = itemType and getProfileOwnedTable(itemType)
 
@@ -1832,7 +1832,7 @@ local function spawnWeapon(weaponNameOrId, amount)
         return false
     end
 
-    CartiHubAddFakeInventoryAmount(itemId, itemType, amount)
+    DenizHubAddFakeInventoryAmount(itemId, itemType, amount)
 
     refreshMainInventoryNow()
 
@@ -1862,7 +1862,7 @@ local function spawnWeaponById(itemId, itemType, amount)
         return false
     end
 
-    CartiHubAddFakeInventoryAmount(itemId, itemType, amount)
+    DenizHubAddFakeInventoryAmount(itemId, itemType, amount)
 
     refreshMainInventoryNow()
 
@@ -1893,7 +1893,7 @@ local function spawnWeaponByIdNoPopup(itemId, itemType, amount)
         return false
     end
 
-    CartiHubAddFakeInventoryAmount(itemId, itemType, amount)
+    DenizHubAddFakeInventoryAmount(itemId, itemType, amount)
 
     refreshMainInventoryNow()
 
@@ -1947,7 +1947,7 @@ local function spawnAllGodlyWeapons(amount)
                 seen[itemId] = true
 
                 if getProfileOwnedTable(itemType) then
-                    CartiHubAddFakeInventoryAmount(itemId, itemType, amount)
+                    DenizHubAddFakeInventoryAmount(itemId, itemType, amount)
                     spawnedCount += 1
                 end
             end
@@ -1978,7 +1978,7 @@ local function spawnAllAncientWeapons(amount)
                 seen[itemId] = true
 
                 if getProfileOwnedTable(itemType) then
-                    CartiHubAddFakeInventoryAmount(itemId, itemType, amount)
+                    DenizHubAddFakeInventoryAmount(itemId, itemType, amount)
                     spawnedCount += 1
                 end
             end
@@ -2036,7 +2036,7 @@ local function spawnAllChromaWeapons(amount)
                 seen[itemId] = true
 
                 if getProfileOwnedTable(itemType) then
-                    CartiHubAddFakeInventoryAmount(itemId, itemType, amount)
+                    DenizHubAddFakeInventoryAmount(itemId, itemType, amount)
                     spawnedCount += 1
                 end
             end
@@ -5358,12 +5358,12 @@ local function applyInventoryDelta(itemId, itemType, delta)
         return
     end
 
-    local hasFakeStack = CartiHubGetFakeInventoryAmount(itemId, itemType) > 0
+    local hasFakeStack = DenizHubGetFakeInventoryAmount(itemId, itemType) > 0
     local current = tonumber(owned[itemId]) or 0
     local nextAmount
 
     if hasFakeStack then
-        nextAmount = CartiHubAddFakeInventoryAmount(itemId, itemType, delta)
+        nextAmount = DenizHubAddFakeInventoryAmount(itemId, itemType, delta)
     else
         nextAmount = current + delta
         if nextAmount > 0 then
