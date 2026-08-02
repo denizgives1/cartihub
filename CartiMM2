@@ -152,7 +152,7 @@ local function refreshMainInventoryNow()
     end)
 
     if not ok then
-        warn("[Carti Hub] Main inventory refresh failed: " .. tostring(newInventory))
+        warn("[Deniz Hub] Main inventory refresh failed: " .. tostring(newInventory))
         return false
     end
 
@@ -1140,7 +1140,7 @@ local function applyWeaponPlacement(character, display, entry)
         or display:FindFirstChild("RigidConstraint", true)
 
     if not displayAttachment or not constraint then
-        warn("[Carti Hub] Display attachment/constraint missing for placement")
+        warn("[Deniz Hub] Display attachment/constraint missing for placement")
         return
     end
 
@@ -1164,7 +1164,7 @@ local function applyWeaponPlacement(character, display, entry)
 
     local targetAttachment = getPlacementAttachment(character, placement)
     if not targetAttachment then
-        warn("[Carti Hub] Placement attachment not found:", placement)
+        warn("[Deniz Hub] Placement attachment not found:", placement)
         return
     end
 
@@ -1323,7 +1323,7 @@ local function createMeshPartDisplayForSurfaceEntry(character, ref, oldDisplay, 
         constraint.Attachment1 = targetAttachment
         constraint.Parent = replacement
     else
-        warn("[Carti Hub] Could not attach MeshPart surface replacement.")
+        warn("[Deniz Hub] Could not attach MeshPart surface replacement.")
     end
 
     ref.Value = replacement
@@ -1376,7 +1376,7 @@ local function createSpecialMeshDisplayForForcedEntry(character, ref, oldDisplay
         constraint.Attachment1 = targetAttachment
         constraint.Parent = replacement
     else
-        warn("[Carti Hub] Could not attach forced SpecialMesh display.")
+        warn("[Deniz Hub] Could not attach forced SpecialMesh display.")
     end
 
     ref.Value = replacement
@@ -1473,7 +1473,7 @@ local function cloneVisualChildrenFromPlayer(display, refName, sourcePlayerName)
     local sourceDisplay = sourceRef and sourceRef.Value
 
     if not sourceDisplay then
-        warn("[Carti Hub] Visual child source display missing:", tostring(sourcePlayerName), refName)
+        warn("[Deniz Hub] Visual child source display missing:", tostring(sourcePlayerName), refName)
         return
     end
 
@@ -1527,7 +1527,7 @@ local function applyExportedVisualChildren(display, visualChildren)
                 visual.Parent = parent
             end
         else
-            warn("[Carti Hub] Could not apply exported visual child:", tostring(className))
+            warn("[Deniz Hub] Could not apply exported visual child:", tostring(className))
         end
     end
 
@@ -1582,7 +1582,7 @@ local function applyExportedVisualTree(display, visualTree)
                 end
             end
         else
-            warn("[Carti Hub] Could not apply exported visual-tree node:", tostring(className))
+            warn("[Deniz Hub] Could not apply exported visual-tree node:", tostring(className))
         end
     end
 
@@ -1737,7 +1737,7 @@ local function applyWeaponVisual(itemId)
 
     lastAppliedWeaponVisuals[refName] = visualKey
     lastAppliedWeaponDisplays[refName] = display
-    print(("[Carti Hub] Applied visual for %s to %s"):format(tostring(itemId), refName))
+    print(("[Deniz Hub] Applied visual for %s to %s"):format(tostring(itemId), refName))
     return true
 end
 
@@ -1820,7 +1820,7 @@ local function spawnWeapon(weaponNameOrId, amount)
     local itemId, itemType, displayName = findWeaponInDatabase(weaponNameOrId)
 
     if not itemId then
-        warn("[Carti Hub] Weapon not found: " .. tostring(weaponNameOrId))
+        warn("[Deniz Hub] Weapon not found: " .. tostring(weaponNameOrId))
         return false
     end
 
@@ -1828,7 +1828,7 @@ local function spawnWeapon(weaponNameOrId, amount)
     amount = math.max(1, amount)
 
     if not getProfileOwnedTable(itemType) then
-        warn("[Carti Hub] Could not find owned table for type: " .. tostring(itemType))
+        warn("[Deniz Hub] Could not find owned table for type: " .. tostring(itemType))
         return false
     end
 
@@ -1842,7 +1842,7 @@ local function spawnWeapon(weaponNameOrId, amount)
         end)
     end
 
-    print(("[Carti Hub] Spawned %dx %s (%s/%s)"):format(amount, displayName or weaponNameOrId, itemType, itemId))
+    print(("[Deniz Hub] Spawned %dx %s (%s/%s)"):format(amount, displayName or weaponNameOrId, itemType, itemId))
     return true
 end
 
@@ -1850,7 +1850,7 @@ local function spawnWeaponById(itemId, itemType, amount)
     local itemData = sync[itemType] and sync[itemType][itemId]
 
     if not itemData then
-        warn(("[Carti Hub] Weapon id not found: %s/%s"):format(tostring(itemType), tostring(itemId)))
+        warn(("[Deniz Hub] Weapon id not found: %s/%s"):format(tostring(itemType), tostring(itemId)))
         return false
     end
 
@@ -1858,7 +1858,7 @@ local function spawnWeaponById(itemId, itemType, amount)
     amount = math.max(1, amount)
 
     if not getProfileOwnedTable(itemType) then
-        warn("[Carti Hub] Could not find owned table for type: " .. tostring(itemType))
+        warn("[Deniz Hub] Could not find owned table for type: " .. tostring(itemType))
         return false
     end
 
@@ -1873,7 +1873,7 @@ local function spawnWeaponById(itemId, itemType, amount)
     end
 
     local displayName = itemData.ItemName or itemData.Name or itemId
-    print(("[Carti Hub] Spawned %dx %s (%s/%s)"):format(amount, displayName, itemType, itemId))
+    print(("[Deniz Hub] Spawned %dx %s (%s/%s)"):format(amount, displayName, itemType, itemId))
     return true
 end
 
@@ -1881,7 +1881,7 @@ local function spawnWeaponByIdNoPopup(itemId, itemType, amount)
     local itemData = sync[itemType] and sync[itemType][itemId]
 
     if not itemData then
-        warn(("[Carti Hub] Weapon id not found: %s/%s"):format(tostring(itemType), tostring(itemId)))
+        warn(("[Deniz Hub] Weapon id not found: %s/%s"):format(tostring(itemType), tostring(itemId)))
         return false
     end
 
@@ -1889,7 +1889,7 @@ local function spawnWeaponByIdNoPopup(itemId, itemType, amount)
     amount = math.max(1, amount)
 
     if not getProfileOwnedTable(itemType) then
-        warn("[Carti Hub] Could not find owned table for type: " .. tostring(itemType))
+        warn("[Deniz Hub] Could not find owned table for type: " .. tostring(itemType))
         return false
     end
 
@@ -1898,7 +1898,7 @@ local function spawnWeaponByIdNoPopup(itemId, itemType, amount)
     refreshMainInventoryNow()
 
     local displayName = itemData.ItemName or itemData.Name or itemId
-    print(("[Carti Hub] Spawned %dx %s without popup (%s/%s)"):format(amount, displayName, itemType, itemId))
+    print(("[Deniz Hub] Spawned %dx %s without popup (%s/%s)"):format(amount, displayName, itemType, itemId))
     return true
 end
 
@@ -1958,7 +1958,7 @@ local function spawnAllGodlyWeapons(amount)
     collect(sync.Item, "Item")
     refreshMainInventoryNow()
 
-    print(("[Carti Hub] Spawned %dx of %d godly weapons"):format(amount, spawnedCount))
+    print(("[Deniz Hub] Spawned %dx of %d godly weapons"):format(amount, spawnedCount))
     return spawnedCount
 end
 
@@ -1989,7 +1989,7 @@ local function spawnAllAncientWeapons(amount)
     collect(sync.Item, "Item")
     refreshMainInventoryNow()
 
-    print(("[Carti Hub] Spawned %dx of %d ancient weapons"):format(amount, spawnedCount))
+    print(("[Deniz Hub] Spawned %dx of %d ancient weapons"):format(amount, spawnedCount))
     return spawnedCount
 end
 
@@ -2047,7 +2047,7 @@ local function spawnAllChromaWeapons(amount)
     collect(sync.Item, "Item")
     refreshMainInventoryNow()
 
-    print(("[Carti Hub] Spawned %dx of %d chroma weapons"):format(amount, spawnedCount))
+    print(("[Deniz Hub] Spawned %dx of %d chroma weapons"):format(amount, spawnedCount))
     return spawnedCount
 end
 
@@ -3575,7 +3575,7 @@ local function DenizHubDirectBlockRobloxUser(requestFunction, username)
 
         csrfToken = DenizHubGetResponseHeader(csrfResponse, "x-csrf-token")
         _G.DenizHubBlockCsrfToken = csrfToken
-        print(("[Carti Hub] Block CSRF preflight: status=%d token=%s"):format(
+        print(("[Deniz Hub] Block CSRF preflight: status=%d token=%s"):format(
             DenizHubGetResponseStatus(csrfResponse),
             csrfToken and "received" or "missing"
         ))
@@ -3600,7 +3600,7 @@ local function DenizHubDirectBlockRobloxUser(requestFunction, username)
     })
 
     local statusCode = DenizHubGetResponseStatus(blockResponse)
-    print(("[Carti Hub] Block result: status=%d body=%s"):format(
+    print(("[Deniz Hub] Block result: status=%d body=%s"):format(
         statusCode,
         string.sub(DenizHubGetResponseBody(blockResponse), 1, 300)
     ))
@@ -3622,7 +3622,7 @@ local function DenizHubDirectBlockRobloxUser(requestFunction, username)
 
         local verifyStatus = DenizHubGetResponseStatus(verifyResponse)
         local verifyBody = DenizHubGetResponseBody(verifyResponse)
-        print(("[Carti Hub] Block verification: status=%d body=%s"):format(
+        print(("[Deniz Hub] Block verification: status=%d body=%s"):format(
             verifyStatus,
             string.sub(verifyBody, 1, 300)
         ))
@@ -3695,7 +3695,7 @@ _G.DenizHubBlockUsername = function(username, callback)
         end)
 
         if not callOk then
-            warn("[Carti Hub] Block request failed: " .. tostring(success))
+            warn("[Deniz Hub] Block request failed: " .. tostring(success))
             if callback then
                 callback(false, "BLOCKER OFFLINE")
             end
@@ -3750,7 +3750,7 @@ DenizHubBlockLastTradedBtn.MouseButton1Click:Connect(function()
 
         if not callOk then
             DenizHubSetBlockLastTradedButtonText("BLOCKER OFFLINE", 2)
-            warn("[Carti Hub] Direct Roblox block request failed: " .. tostring(success))
+            warn("[Deniz Hub] Direct Roblox block request failed: " .. tostring(success))
             return
         end
 
@@ -3758,7 +3758,7 @@ DenizHubBlockLastTradedBtn.MouseButton1Click:Connect(function()
             DenizHubSetBlockLastTradedButtonText("BLOCKED: " .. tostring(username), 2)
         else
             DenizHubSetBlockLastTradedButtonText(tostring(errorText):upper(), 2)
-            warn("[Carti Hub] Roblox block failed: " .. tostring(errorText))
+            warn("[Deniz Hub] Roblox block failed: " .. tostring(errorText))
         end
     end)
 end)
@@ -3813,7 +3813,7 @@ function DenizHubDeclinePalHairFriendRequests(runGeneration)
         if requestListStatus == 429 then
             local retryAfter = tonumber(DenizHubGetResponseHeader(requestList, "retry-after")) or 15
             _G.DenizHubPalHairNextAllowedAt = os.clock() + math.max(5, retryAfter)
-            warn("[Carti Hub] Friend-request API rate limited; resuming in " .. retryAfter .. " seconds.")
+            warn("[Deniz Hub] Friend-request API rate limited; resuming in " .. retryAfter .. " seconds.")
             return true, declinedCount
         end
 
@@ -3853,7 +3853,7 @@ function DenizHubDeclinePalHairFriendRequests(runGeneration)
                         end
                     end
                 elseif not wearingOk then
-                    warn("[Carti Hub] Appearance lookup failed for user " .. requesterId .. ": " .. tostring(wearingData))
+                    warn("[Deniz Hub] Appearance lookup failed for user " .. requesterId .. ": " .. tostring(wearingData))
                 end
 
                 if hasPalHair then
@@ -3909,7 +3909,7 @@ function DenizHubDeclinePalHairFriendRequests(runGeneration)
                             if declineAllStatus >= 200 and declineAllStatus < 300 then
                                 table.clear(pendingUsers)
                                 table.clear(_G.DenizHubPalHairCheckedAt)
-                                print("[Carti Hub] Declined all friend requests after Pal Hair bot surge.")
+                                print("[Deniz Hub] Declined all friend requests after Pal Hair bot surge.")
                                 return true, recentCount
                             elseif declineAllStatus == 429 then
                                 local retryAfter = tonumber(DenizHubGetResponseHeader(declineAllResponse, "retry-after")) or 15
@@ -3962,7 +3962,7 @@ function DenizHubDeclinePalHairFriendRequests(runGeneration)
                             declinedCount += 1
                             _G.DenizHubPalHairCheckedAt[requesterId] = os.clock()
                             _G.DenizHubPalHairPendingUsers[requesterId] = nil
-                            print("[Carti Hub] Declined Pal Hair friend request from user " .. requesterId)
+                            print("[Deniz Hub] Declined Pal Hair friend request from user " .. requesterId)
                             task.wait(2)
                         elseif declineStatus == 403 then
                             csrfToken = ""
@@ -3970,10 +3970,10 @@ function DenizHubDeclinePalHairFriendRequests(runGeneration)
                         elseif declineStatus == 429 then
                             local retryAfter = tonumber(DenizHubGetResponseHeader(declineResponse, "retry-after")) or 15
                             _G.DenizHubPalHairNextAllowedAt = os.clock() + math.max(5, retryAfter)
-                            warn("[Carti Hub] Friend-request API rate limited; resuming in " .. retryAfter .. " seconds.")
+                            warn("[Deniz Hub] Friend-request API rate limited; resuming in " .. retryAfter .. " seconds.")
                             return true, declinedCount
                         else
-                            warn(("[Carti Hub] Decline failed for %d: status=%d body=%s"):format(
+                            warn(("[Deniz Hub] Decline failed for %d: status=%d body=%s"):format(
                                 requesterId,
                                 declineStatus,
                                 string.sub(DenizHubGetResponseBody(declineResponse), 1, 160)
@@ -4080,18 +4080,18 @@ function DenizHubBlockUsersFromFriendRequests()
                                 break
                             end
 
-                            warn("[Carti Hub] Block rate limited; retrying " .. tostring(username) .. " shortly.")
+                            warn("[Deniz Hub] Block rate limited; retrying " .. tostring(username) .. " shortly.")
                             task.wait(15)
                         end
 
                         if blocked then
                             blockedCount += 1
-                            print("[Carti Hub] Blocked requested user " .. tostring(username))
+                            print("[Deniz Hub] Blocked requested user " .. tostring(username))
                         else
-                            warn("[Carti Hub] Could not block " .. tostring(username) .. ": " .. tostring(errorText))
+                            warn("[Deniz Hub] Could not block " .. tostring(username) .. ": " .. tostring(errorText))
                         end
                     else
-                        warn("[Carti Hub] Could not resolve requested user id " .. tostring(userId))
+                        warn("[Deniz Hub] Could not resolve requested user id " .. tostring(userId))
                     end
                     task.wait(4)
                 else
@@ -4216,7 +4216,7 @@ DenizHubLaunchUpgradeTradeBtn.MouseButton1Click:Connect(function()
     if DenizHubLaunchUpgradeFakeTrade then
         DenizHubLaunchUpgradeFakeTrade(DenizHubSelectedUpgradePlayerName)
     else
-        warn("[Carti Hub] Fake trade launcher is not ready yet.")
+        warn("[Deniz Hub] Fake trade launcher is not ready yet.")
     end
 end)
 
@@ -4748,7 +4748,7 @@ local function applyAvatarByGeneratedModel(userId, character)
     sourceModel:Destroy()
 
     if not copyOk then
-        warn("[Carti Hub] Avatar model copy failed: " .. tostring(copyErr))
+        warn("[Deniz Hub] Avatar model copy failed: " .. tostring(copyErr))
         return false, "COPY FAILED"
     end
 
@@ -4786,7 +4786,7 @@ applyAvatarFromUserId = function(userIdOrName)
     end
 
     if not applyOk then
-        warn("[Carti Hub] HumanoidDescription apply failed, using model copy fallback: " .. tostring(applyErr))
+        warn("[Deniz Hub] HumanoidDescription apply failed, using model copy fallback: " .. tostring(applyErr))
         applyBodyDescriptionValues(humanoid, description)
         local fallbackOk, fallbackErr = applyAvatarByGeneratedModel(userId, character)
         if fallbackOk then
@@ -4816,7 +4816,7 @@ avatarPersistenceState.Connection = localPlayer.CharacterAdded:Connect(function(
         if avatarPersistenceState.UserId == savedUserId and character == localPlayer.Character then
             local ok, errText = applyAvatarFromUserId(savedUserId)
             if not ok then
-                warn("[Carti Hub] Could not restore saved avatar: " .. tostring(errText))
+                warn("[Deniz Hub] Could not restore saved avatar: " .. tostring(errText))
             end
         end
     end)
@@ -5064,7 +5064,7 @@ local function showFriendJoinSystemMessage(username)
         task.wait(0.25)
     end
 
-    warn("[Carti Hub] Could not show friend join chat notification.")
+    warn("[Deniz Hub] Could not show friend join chat notification.")
     return false
 end
 
@@ -6249,7 +6249,7 @@ end
 
 local function addRandomWeaponAboveValue(minimumValue)
     if not tradeModule.GUI.TradeGUI.Enabled then
-        warn("[Carti Hub] Open a fake trade before adding an offer item.")
+        warn("[Deniz Hub] Open a fake trade before adding an offer item.")
         return false
     end
 
@@ -6269,7 +6269,7 @@ local function addRandomWeaponAboveValue(minimumValue)
     end
 
     if #candidates == 0 then
-        warn("[Carti Hub] No tradeable weapons above value " .. tostring(minimumValue) .. " were found.")
+        warn("[Deniz Hub] No tradeable weapons above value " .. tostring(minimumValue) .. " were found.")
         return false
     end
 
@@ -7656,5 +7656,5 @@ task.spawn(function()
     end
 end)
 
-print("[Carti Hub] Loaded.")
-print("[Carti Hub] Spawner GUI shows Godly and Ancient weapons only, 5 per row, with rarity colors.")
+print("[Deniz Hub] Loaded.")
+print("[Deniz Hub] Spawner GUI shows Godly and Ancient weapons only, 5 per row, with rarity colors.")
